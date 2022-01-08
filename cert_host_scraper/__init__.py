@@ -6,21 +6,28 @@ import requests
 import logging
 from dataclasses import dataclass
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class UrlResult:
+    url: str
+    status_code: int
+
+
 @dataclass
 class Result:
     search: str
-    total_urls: List[str]
-    valid_urls: List[str]
+    scraped: List[UrlResult]
 
 
-def is_valid_site(url: str) -> bool:
+def fetch_site_information(url: str) -> int:
     try:
-        result = requests.get(url, timeout=2).status_code == 200
-        return result
-    except:
-        return False
+        return requests.get(url, timeout=2).status_code
+    except Exception as e:
+        logger.debug(e)
+        return -1
 
 
 def fetch_site(search: str) -> str:
@@ -46,14 +53,12 @@ def scrape_urls(contents: str) -> List[str]:
     return list(set(total_urls))
 
 
-def validate_urls(results: List[str]) -> List[str]:
+def validate_urls(results: List[str]) -> List[UrlResult]:
     valid_urls = []
-    for i, result in enumerate(results):
-        logger.debug(f"Validating {i}/{len(results)}")
-        if not is_valid_site(result):
-            logger.debug(f"Skipping {result} as invalid site")
-            continue
-        valid_urls.append(result)
+    for i, url in enumerate(results):
+        logger.info(f"Validating {i}/{len(results)}")
+        status_code = fetch_site_information(url)
+        valid_urls.append(UrlResult(url, status_code))
 
     return valid_urls
 
@@ -62,6 +67,6 @@ def fetch_results_for_search(site: str) -> Result:
     contents = fetch_site(site)
     total_urls = scrape_urls(contents)
     logger.debug(f"Found {len(total_urls)}")
-    valid_urls = validate_urls(total_urls)
+    url_results = validate_urls(total_urls)
 
-    return Result(site, total_urls, valid_urls)
+    return Result(site, url_results)

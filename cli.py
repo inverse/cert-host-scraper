@@ -7,9 +7,9 @@ from cert_host_scraper import fetch_results_for_search
 def search(search: str):
     result = fetch_results_for_search(search)
 
-    print(f"Found {len(result.valid_urls)}/{len(result.total_urls)} URLs for {result.search}")
-    for valid_url in result.valid_urls:
-        print(f"- {valid_url}")
+    print(f"Found {len(result.scraped)} URLs for {result.search}")
+    for url_result in result.scraped:
+        print(f"- {url_result.url} - ({url_result.status_code})")
 
 
 if __name__ == '__main__':
