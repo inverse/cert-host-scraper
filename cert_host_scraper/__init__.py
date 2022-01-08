@@ -1,10 +1,9 @@
-
-from typing import List
-from bs4 import BeautifulSoup
-
-import requests
 import logging
 from dataclasses import dataclass
+from typing import List
+
+import requests
+from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,7 +34,7 @@ def fetch_site(search: str) -> str:
     result = requests.get(url)
     result.raise_for_status()
 
-    return result.content
+    return result.content.decode()
 
 
 def scrape_urls(contents: str) -> List[str]:
