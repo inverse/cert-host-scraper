@@ -1,17 +1,20 @@
 import click
 from beautifultable import BeautifulTable
 
-from cert_host_scraper import fetch_results_for_search
+from cert_host_scraper import Options, fetch_results_for_search
 
 
 @click.command()
 @click.argument("search")
 @click.option("--status-code", help="Pass the HTTP status code to filter results on")
-def search(search: str, status_code: int):
+@click.option(
+    "--timeout", help="Amount in seconds before timing out on each request", default=2
+)
+def search(search: str, status_code: int, timeout: int):
     """
     Search the certificate transparency log.
     """
-    result = fetch_results_for_search(search)
+    result = fetch_results_for_search(search, Options(timeout))
     table = BeautifulTable()
     click.echo(f"Found {len(result.scraped)} URLs for {result.search}")
     if status_code:

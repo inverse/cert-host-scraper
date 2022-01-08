@@ -1,14 +1,19 @@
+import asyncio
 import logging
 from dataclasses import dataclass
 from typing import List
 
-import requests
 import aiohttp
-import asyncio
+import requests
 from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class Options:
+    timeout: int
 
 
 @dataclass
@@ -26,9 +31,11 @@ class Result:
         return [result for result in self.scraped if result.status_code == status_code]
 
 
-async def fetch_site_information(session: aiohttp.ClientSession, url: str) -> int:
+async def fetch_site_information(
+    session: aiohttp.ClientSession, url: str, timeout: aiohttp.ClientTimeout
+) -> int:
     try:
-        async with session.get(url) as resp:
+        async with session.get(url, timeout=timeout) as resp:
             return resp.status
     except Exception as e:
         logger.debug(e)
@@ -58,21 +65,22 @@ def scrape_urls(contents: str) -> List[str]:
     return list(set(total_urls))
 
 
-async def validate_urls(results: List[str]) -> List[UrlResult]:
+async def validate_urls(results: List[str], options: Options) -> List[UrlResult]:
     valid_urls = []
+    timeout = aiohttp.ClientTimeout(total=options.timeout)
     async with aiohttp.ClientSession() as session:
         for i, url in enumerate(results):
-            logger.info(f"Validating {i}/{len(results)}")
-            status_code = await fetch_site_information(session, url)
+            logger.debug(f"Validating {i}/{len(results)}")
+            status_code = await fetch_site_information(session, url, timeout)
             valid_urls.append(UrlResult(url, status_code))
 
     return valid_urls
 
 
-def fetch_results_for_search(site: str) -> Result:
+def fetch_results_for_search(site: str, options: Options) -> Result:
     contents = fetch_site(site)
     total_urls = scrape_urls(contents)
     logger.debug(f"Found {len(total_urls)}")
-    url_results = asyncio.run(validate_urls(total_urls))
+    url_results = asyncio.run(validate_urls(total_urls, options))
 
     return Result(site, url_results)
