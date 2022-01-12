@@ -1,10 +1,19 @@
+import logging
+
 import click
 from beautifultable import BeautifulTable
 
 from cert_host_scraper import Options, fetch_results_for_search
 
 
-@click.command()
+@click.group()
+@click.option("--debug", is_flag=True, help="Whether to enable debug level output")
+def cli(debug: bool):
+    log_level = logging.DEBUG if debug else logging.INFO
+    logging.basicConfig(level=log_level)
+
+
+@cli.command()
 @click.argument("search")
 @click.option("--status-code", help="Pass the HTTP status code to filter results on")
 @click.option(
@@ -31,4 +40,4 @@ def search(search: str, status_code: int, timeout: int):
 
 
 if __name__ == "__main__":
-    search()
+    cli()

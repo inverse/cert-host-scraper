@@ -7,7 +7,6 @@ import aiohttp
 import requests
 from bs4 import BeautifulSoup
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -72,6 +71,7 @@ async def validate_urls(results: List[str], options: Options) -> List[UrlResult]
         for i, url in enumerate(results):
             logger.debug(f"Validating {i}/{len(results)}")
             status_code = await fetch_site_information(session, url, timeout)
+            logger.debug(f"{url} returned {status_code}")
             valid_urls.append(UrlResult(url, status_code))
 
     return valid_urls
