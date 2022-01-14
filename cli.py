@@ -23,6 +23,7 @@ def search(search: str, status_code: int, timeout: int):
     """
     Search the certificate transparency log.
     """
+    click.echo(f"Searching for {search}")
     result = fetch_results_for_search(search, Options(timeout))
     table = BeautifulTable()
     click.echo(f"Found {len(result.scraped)} URLs for {result.search}")
