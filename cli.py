@@ -1,7 +1,8 @@
 import logging
 
 import click
-from beautifultable import BeautifulTable
+from rich.console import Console
+from rich.table import Table
 
 from cert_host_scraper import Options, fetch_results_for_search
 
@@ -25,7 +26,9 @@ def search(search: str, status_code: int, timeout: int):
     """
     click.echo(f"Searching for {search}")
     result = fetch_results_for_search(search, Options(timeout))
-    table = BeautifulTable()
+    table = Table(show_header=True, header_style="bold blue")
+    table.add_column("URL")
+    table.add_column("Status Code")
     click.echo(f"Found {len(result.scraped)} URLs for {result.search}")
     if status_code:
         display = result.filter_by_status_code(int(status_code))
@@ -33,11 +36,10 @@ def search(search: str, status_code: int, timeout: int):
         display = result.scraped
 
     for url_result in display:
-        table.rows.append([url_result.url, url_result.status_code])
+        table.add_row(url_result.url, str(url_result.status_code))
 
-    table.columns.header = ["URL", "Status Code"]
-    table.columns.alignment["URL"] = BeautifulTable.ALIGN_LEFT
-    click.echo(table)
+    console = Console()
+    console.print(table)
 
 
 if __name__ == "__main__":
