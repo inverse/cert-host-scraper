@@ -5,6 +5,11 @@ description = ""
 authors = ["Malachi Soord <inverse.chi@gmail.com>"]
 license = "MIT"
 
+readme = "README.md"
+repository = "https://github.com/inverse/cert-host-scraper"
+homepage = "https://github.com/inverse/cert-host-scraper"
+
+
 [tool.poetry.scripts]
 cert-host-scraper = "cert_host_scraper.cli:cli"
 
