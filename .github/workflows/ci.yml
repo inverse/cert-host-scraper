@@ -28,5 +28,4 @@ jobs:
         poetry-version: 1.1.12
     - name: Install pip dependencies
       run: poetry install
-    - name: pre-commit
-      run: poetry run pre-commit run --all-files --show-diff-on-failure
+    - uses: pre-commit/action@v2.0.3
