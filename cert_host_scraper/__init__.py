@@ -52,6 +52,10 @@ def fetch_site(search: str) -> str:
 def scrape_urls(contents: str) -> List[str]:
     soup = BeautifulSoup(contents, features="html.parser")
     tables = soup.findAll("table")
+
+    if len(tables) <= 2:
+        return []
+
     results_table = tables[2]
 
     total_urls = []
