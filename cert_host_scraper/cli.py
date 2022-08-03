@@ -18,14 +18,15 @@ def cli(debug: bool):
 @click.argument("search")
 @click.option("--status-code", help="Pass the HTTP status code to filter results on")
 @click.option(
-    "--timeout", help="Amount in seconds before timing out on each request", default=2
+    "--timeout", help="Seconds before timing out on each request", default=2
 )
-def search(search: str, status_code: int, timeout: int):
+@click.option('--clean/--no-clean', is_flag=True, help='Clean wildcard results', default=True)
+def search(search: str, status_code: int, timeout: int, clean: bool):
     """
     Search the certificate transparency log.
     """
     click.echo(f"Searching for {search}")
-    result = fetch_results_for_search(search, Options(timeout))
+    result = fetch_results_for_search(search, Options(timeout, clean))
     table = Table(show_header=True, header_style="bold blue")
     table.add_column("URL")
     table.add_column("Status Code")
