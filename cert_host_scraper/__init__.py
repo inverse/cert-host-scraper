@@ -64,11 +64,11 @@ def scrape_urls(contents: str, options: Options) -> List[str]:
         cells = row.findAll("td")
         if len(cells) == 0:
             continue
-        
-        matching_identity = cells[4].decode_contents()    
+
+        matching_identity = cells[4].decode_contents()
         if options.clean and "*" in matching_identity:
             continue
-        
+
         total_urls.append(f"https://{matching_identity}")
 
     return list(set(total_urls))
