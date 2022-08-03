@@ -1,6 +1,7 @@
 # 0.2.0
 
-- Add `--clean` flag for removing wildcard results
+- Add `--clean/--no-clean` flag for removing wildcard results (default `--clean`)
+- Tidy option text
 
 # 0.1.1
 
