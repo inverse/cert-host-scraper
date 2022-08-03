@@ -18,9 +18,9 @@ def cli(debug: bool):
 @click.argument("search")
 @click.option("--status-code", help="Pass the HTTP status code to filter results on")
 @click.option(
-    "--timeout", help="Amount in seconds before timing out on each request", default=2
+    "--timeout", help="Seconds before timing out on each request", default=2
 )
-@click.option('--clean', is_flag=True, help='"Clean wildcard results', default=False)
+@click.option('--clean/--no-clean', is_flag=True, help='Clean wildcard results', default=True)
 def search(search: str, status_code: int, timeout: int, clean: bool):
     """
     Search the certificate transparency log.
