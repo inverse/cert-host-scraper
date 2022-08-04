@@ -24,19 +24,15 @@ class UrlResult:
 
 @dataclass
 class Result:
-    search: str
     scraped: List[UrlResult]
 
     def filter_by_status_code(self, status_code: int) -> List[UrlResult]:
         return [result for result in self.scraped if result.status_code == status_code]
 
 
-async def fetch_site_information(
-    session: aiohttp.ClientSession, url: str, timeout: aiohttp.ClientTimeout
-) -> int:
+def fetch_site_information(url: str, timeout: int) -> int:
     try:
-        async with session.get(url, timeout=timeout) as resp:
-            return resp.status
+        return requests.get(url, timeout=timeout).status_code
     except Exception as e:
         logger.debug(e)
         return -1
@@ -74,23 +70,11 @@ def scrape_urls(contents: str, options: Options) -> List[str]:
     return list(set(total_urls))
 
 
-async def validate_urls(results: List[str], options: Options) -> List[UrlResult]:
-    valid_urls = []
-    timeout = aiohttp.ClientTimeout(total=options.timeout)
-    async with aiohttp.ClientSession() as session:
-        for i, url in enumerate(results):
-            logger.debug(f"Validating {i}/{len(results)}")
-            status_code = await fetch_site_information(session, url, timeout)
-            logger.debug(f"{url} returned {status_code}")
-            valid_urls.append(UrlResult(url, status_code))
-
-    return valid_urls
+def validate_url(url: str, options: Options) -> UrlResult:
+    return UrlResult(url, fetch_site_information(url, options.timeout))
 
 
-def fetch_results_for_search(site: str, options: Options) -> Result:
+def fetch_urls(site: str, options: Options) -> List[str]:
     contents = fetch_site(site)
-    total_urls = scrape_urls(contents, options)
-    logger.debug(f"Found {len(total_urls)}")
-    url_results = asyncio.run(validate_urls(total_urls, options))
-
-    return Result(site, url_results)
+    urls = scrape_urls(contents, options)
+    return urls
