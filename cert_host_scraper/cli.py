@@ -2,9 +2,10 @@ import logging
 
 import click
 from rich.console import Console
+from rich.progress import track
 from rich.table import Table
 
-from cert_host_scraper import Options, fetch_results_for_search
+from cert_host_scraper import Options, Result, fetch_urls, validate_url
 
 
 @click.group()
@@ -26,16 +27,23 @@ def search(search: str, status_code: int, timeout: int, clean: bool):
     Search the certificate transparency log.
     """
     click.echo(f"Searching for {search}")
-    result = fetch_results_for_search(search, Options(timeout, clean))
-    table = Table(show_header=True, header_style="bold blue")
-    table.add_column("URL")
-    table.add_column("Status Code")
-    click.echo(f"Found {len(result.scraped)} URLs for {result.search}")
+    options = Options(timeout, clean)
+    urls = fetch_urls(search, options)
+    click.echo(f"Found {len(urls)} URLs for {search}")
+
+    results = []
+    for url in track(urls, "Checking URLs"):
+        results.append(validate_url(url, options))
+
+    result = Result(results)
     if status_code:
         display = result.filter_by_status_code(int(status_code))
     else:
         display = result.scraped
 
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("URL")
+    table.add_column("Status Code")
     for url_result in display:
         table.add_row(url_result.url, str(url_result.status_code))
 
