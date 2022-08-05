@@ -32,7 +32,7 @@ def search(search: str, status_code: int, timeout: int, clean: bool):
     click.echo(f"Found {len(urls)} URLs for {search}")
 
     results = []
-    for url in track(urls):
+    for url in track(urls, "Checking URLs"):
         results.append(validate_url(url, options))
 
     result = Result(results)

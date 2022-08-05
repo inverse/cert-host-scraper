@@ -1,9 +1,7 @@
-import asyncio
 import logging
 from dataclasses import dataclass
 from typing import List
 
-import aiohttp
 import requests
 from bs4 import BeautifulSoup
 
