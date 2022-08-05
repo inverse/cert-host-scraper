@@ -1,3 +1,7 @@
+# 0.3.0
+
+- Add progress bar output
+
 # 0.2.0
 
 - Add `--clean/--no-clean` flag for removing wildcard results (default `--clean`)
