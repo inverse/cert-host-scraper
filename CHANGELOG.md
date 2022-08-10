@@ -1,6 +1,7 @@
 # 0.3.0
 
 - Add progress bar output
+- Handle RequestException better in CLI
 
 # 0.2.0
 

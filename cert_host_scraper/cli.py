@@ -1,9 +1,11 @@
 import logging
+import sys
 
 import click
 from rich.console import Console
 from rich.progress import track
 from rich.table import Table
+from requests import RequestException
 
 from cert_host_scraper import Options, Result, fetch_urls, validate_url
 
@@ -28,12 +30,15 @@ def search(search: str, status_code: int, timeout: int, clean: bool):
     """
     click.echo(f"Searching for {search}")
     options = Options(timeout, clean)
-    urls = fetch_urls(search, options)
-    click.echo(f"Found {len(urls)} URLs for {search}")
-
     results = []
-    for url in track(urls, "Checking URLs"):
-        results.append(validate_url(url, options))
+    try:
+        urls = fetch_urls(search, options)
+        click.echo(f"Found {len(urls)} URLs for {search}")
+        for url in track(urls, "Checking URLs"):
+            results.append(validate_url(url, options))
+    except RequestException as e:
+        click.echo(f"Failed to search for results: {e}")
+        sys.exit(1)
 
     result = Result(results)
     if status_code:
