@@ -10,6 +10,15 @@ from rich.table import Table
 from cert_host_scraper import Options, Result, fetch_urls, validate_url
 
 
+def validate_status_code(
+    _ctx: click.core.Context, _param: click.core.Option, value: str
+):
+    try:
+        int(value)
+    except ValueError:
+        raise click.BadParameter("must be an integer")
+
+
 @click.group()
 @click.option("--debug", is_flag=True, help="Whether to enable debug level output")
 def cli(debug: bool):
@@ -19,7 +28,11 @@ def cli(debug: bool):
 
 @cli.command()
 @click.argument("search")
-@click.option("--status-code", help="Pass the HTTP status code to filter results on")
+@click.option(
+    "--status-code",
+    help="Pass the HTTP status code to filter results on",
+    callback=validate_status_code,
+)
 @click.option("--timeout", help="Seconds before timing out on each request", default=2)
 @click.option(
     "--clean/--no-clean", is_flag=True, help="Clean wildcard results", default=True
