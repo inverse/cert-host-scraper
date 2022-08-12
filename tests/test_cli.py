@@ -19,3 +19,8 @@ class TestSearch(TestCase):
         runner = CliRunner()
         result = runner.invoke(cli, ["search", "example.com"])
         self.assertEqual(result.exit_code, 1)
+
+    def test_search_status_code_wrong(self):
+        runner = CliRunner()
+        result = runner.invoke(cli, ["search", "example.com", "--status-code", "xyz"])
+        self.assertEqual(result.exit_code, 2)
