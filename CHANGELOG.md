@@ -1,3 +1,7 @@
+# 0.3.1
+
+- Validate `--status-code` is an integer
+
 # 0.3.0
 
 - Add progress bar output
