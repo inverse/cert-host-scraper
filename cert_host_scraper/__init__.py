@@ -3,9 +3,13 @@ from dataclasses import dataclass
 from typing import List
 
 import requests
+import urllib3
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+
+urllib3.disable_warnings()
 
 
 @dataclass
