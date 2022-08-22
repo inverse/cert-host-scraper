@@ -1,3 +1,7 @@
+# 0.4.1
+
+- Fix `--status-code` filter implementation
+
 # 0.4.0
 
 - Add `--version` flag
