@@ -1,17 +1,14 @@
 import logging
 import sys
-from pathlib import Path
 
 import click
 from requests import RequestException
 from rich.console import Console
 from rich.progress import track
 from rich.table import Table
-from single_source import get_version
 
-__version__ = get_version("cert_host_scraper", Path(__file__).parent.parent)
-
-from cert_host_scraper import Options, Result, fetch_urls, validate_url
+from cert_host_scraper import __version__
+from cert_host_scraper.scraper import Options, Result, fetch_urls, validate_url
 
 NO_STATUS_CODE_FILTER = 0
 
