@@ -34,7 +34,6 @@ class Result:
 
 def fetch_site_information(url: str, timeout: int) -> int:
     try:
-
         return requests.get(url, timeout=timeout).status_code
     except Exception as e:
         logger.debug(e)
