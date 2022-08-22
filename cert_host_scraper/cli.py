@@ -13,7 +13,6 @@ __version__ = get_version("cert_host_scraper", Path(__file__).parent.parent)
 
 from cert_host_scraper import Options, Result, fetch_urls, validate_url
 
-
 NO_STATUS_CODE_FILTER = 0
 
 
@@ -26,6 +25,7 @@ def validate_status_code(
         raise click.BadParameter("must be an integer")
     except TypeError:
         return NO_STATUS_CODE_FILTER
+
 
 @click.group()
 @click.option("--debug", is_flag=True, help="Whether to enable debug level output")
