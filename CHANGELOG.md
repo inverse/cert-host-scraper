@@ -1,3 +1,7 @@
+# 0.4.2
+
+- Disable warnings from urllib3
+
 # 0.4.1
 
 - Fix `--status-code` filter implementation

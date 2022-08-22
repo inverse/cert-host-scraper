@@ -3,9 +3,13 @@ from dataclasses import dataclass
 from typing import List
 
 import requests
+import urllib3
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+
+urllib3.disable_warnings()
 
 
 @dataclass
@@ -30,6 +34,7 @@ class Result:
 
 def fetch_site_information(url: str, timeout: int) -> int:
     try:
+
         return requests.get(url, timeout=timeout).status_code
     except Exception as e:
         logger.debug(e)
