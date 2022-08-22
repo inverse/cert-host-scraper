@@ -9,23 +9,27 @@ from rich.progress import track
 from rich.table import Table
 from single_source import get_version
 
-__version__ = get_version(__name__, Path(__file__).parent.parent)
+__version__ = get_version("cert_host_scraper", Path(__file__).parent.parent)
 
 from cert_host_scraper import Options, Result, fetch_urls, validate_url
+
+
+NO_STATUS_CODE_FILTER = 0
 
 
 def validate_status_code(
     _ctx: click.core.Context, _param: click.core.Option, value: str
 ):
     try:
-        int(value)
+        return int(value)
     except ValueError:
         raise click.BadParameter("must be an integer")
-
+    except TypeError:
+        return NO_STATUS_CODE_FILTER
 
 @click.group()
 @click.option("--debug", is_flag=True, help="Whether to enable debug level output")
-@click.version_option(__version__, message="%(prog)s: %(version)s")
+@click.version_option(__version__, message="%(version)s")
 def cli(debug: bool):
     log_level = logging.DEBUG if debug else logging.INFO
     logging.basicConfig(level=log_level)
@@ -59,8 +63,8 @@ def search(search: str, status_code: int, timeout: int, clean: bool):
         sys.exit(1)
 
     result = Result(results)
-    if status_code:
-        display = result.filter_by_status_code(int(status_code))
+    if status_code != NO_STATUS_CODE_FILTER:
+        display = result.filter_by_status_code(status_code)
     else:
         display = result.scraped
 
