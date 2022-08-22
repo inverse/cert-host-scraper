@@ -6,12 +6,12 @@
 [![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Query the certificate transparency log for a keyword and check the status code of the results. Optionally filtering out based on the code.
+Query the certificate transparency log from [crt.sh](crt.sh) by a given a keyword and returns the status code of the matched results. Optionally filtering the results by status code.
 
 ## Usage
 
 ```bash
-cert-host-scraper search your-domain.com [--status-code 200]
+cert-host-scraper search your-domain.com [--status-code 200] [--clean/--no-clean]
 ```
 
 ## Installation
