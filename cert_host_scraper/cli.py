@@ -9,10 +9,7 @@ from rich.progress import track
 from rich.table import Table
 from single_source import get_version
 
-__version__ = get_version(
-    "auto-pr",
-    Path(__file__).parent.parent,
-)
+__version__ = get_version(__name__, Path(__file__).parent.parent)
 
 from cert_host_scraper import Options, Result, fetch_urls, validate_url
 
