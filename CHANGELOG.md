@@ -1,3 +1,7 @@
+# 0.4.0
+
+- Add `--version` flag
+
 # 0.3.1
 
 - Validate `--status-code` is an integer
