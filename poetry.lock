@@ -335,6 +335,14 @@ pygments = ">=2.6.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
+name = "single-source"
+version = "0.3.0"
+description = "Access to the project version in Python code for PEP 621-style projects"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[[package]]
 name = "soupsieve"
 version = "2.3.2.post1"
 description = "A modern CSS selector implementation for Beautiful Soup."
@@ -378,7 +386,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "64f5741e51a21da78c64afa216380d02a08598b98107661c36f37d5b9d851152"
+content-hash = "66a33636d1ffafb9d5dc595e80fdc71fa7a990d07386160cfb0c66b73b8dc666"
 
 [metadata.files]
 aiodns = [
@@ -861,6 +869,10 @@ requests = [
 rich = [
     {file = "rich-11.2.0-py3-none-any.whl", hash = "sha256:d5f49ad91fb343efcae45a2b2df04a9755e863e50413623ab8c9e74f05aee52b"},
     {file = "rich-11.2.0.tar.gz", hash = "sha256:1a6266a5738115017bb64a66c59c717e7aa047b3ae49a011ede4abdeffc6536e"},
+]
+single-source = [
+    {file = "single-source-0.3.0.tar.gz", hash = "sha256:b12705af958ca99d56ea9ce40bd9cc749378f4fe7ad03b1f9067e29daceef27d"},
+    {file = "single_source-0.3.0-py3-none-any.whl", hash = "sha256:7bc87168ced50f638b6ab0cda4cc1ce9e80ee0e1220014397050d336d021a597"},
 ]
 soupsieve = [
     {file = "soupsieve-2.3.2.post1-py3-none-any.whl", hash = "sha256:3b2503d3c7084a42b1ebd08116e5f81aadfaea95863628c80a3b774a11b7c759"},

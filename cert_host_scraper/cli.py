@@ -1,11 +1,15 @@
 import logging
 import sys
+from pathlib import Path
 
 import click
 from requests import RequestException
 from rich.console import Console
 from rich.progress import track
 from rich.table import Table
+from single_source import get_version
+
+__version__ = get_version(__name__, Path(__file__).parent.parent)
 
 from cert_host_scraper import Options, Result, fetch_urls, validate_url
 
@@ -21,6 +25,7 @@ def validate_status_code(
 
 @click.group()
 @click.option("--debug", is_flag=True, help="Whether to enable debug level output")
+@click.version_option(__version__, message="%(prog)s: %(version)s")
 def cli(debug: bool):
     log_level = logging.DEBUG if debug else logging.INFO
     logging.basicConfig(level=log_level)
