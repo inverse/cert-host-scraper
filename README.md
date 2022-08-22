@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Query the certificate transparency log from [crt.sh](crt.sh) by a given a keyword and returns the status code of the matched results. Optionally filtering the results by status code.
+Query the certificate transparency log from [crt.sh](https://crt.sh) by a given a keyword and returns the status code of the matched results. Optionally filtering the results by status code.
 
 ## Usage
 
