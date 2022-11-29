@@ -28,6 +28,17 @@ With pip:
 pip install cert-host-scraper
 ```
 
-## Licence
+## Development
+
+Requires [poetry][0] and Python 3.10.
+
+```
+poetry install
+poetry run cert_host_scraper/cli.py
+```
+
+## License
 
 MIT
+
+[0]: https://python-poetry.org/
