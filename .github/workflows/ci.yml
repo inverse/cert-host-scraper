@@ -28,7 +28,7 @@ jobs:
         poetry-version: 1.1.12
     - name: Install pip dependencies
       run: poetry install
-    - uses: pre-commit/action@v2.0.3
+    - uses: pre-commit/action@v3.0.0
   test:
     runs-on: ubuntu-20.04
     steps:
