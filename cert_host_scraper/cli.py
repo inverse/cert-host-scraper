@@ -9,6 +9,7 @@ from rich.table import Table
 
 from cert_host_scraper import __version__
 from cert_host_scraper.scraper import Options, Result, fetch_urls, validate_url
+from cert_host_scraper.utils import strip_url
 
 NO_STATUS_CODE_FILTER = 0
 
@@ -43,10 +44,19 @@ def cli(debug: bool):
 @click.option(
     "--clean/--no-clean", is_flag=True, help="Clean wildcard results", default=True
 )
-def search(search: str, status_code: int, timeout: int, clean: bool):
+@click.option(
+    "--strip/--no-strip",
+    is_flag=True,
+    help="Remove protocol and leading www from search",
+    default=True,
+)
+def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool):
     """
     Search the certificate transparency log.
     """
+    if strip:
+        search = strip_url(search)
+
     click.echo(f"Searching for {search}")
     options = Options(timeout, clean)
     results = []
