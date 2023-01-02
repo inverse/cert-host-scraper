@@ -34,11 +34,10 @@ Requires [poetry][0] and Python 3.10.
 
 ```
 poetry install
-poetry run cert_host_scraper/cli.py
+poetry run python -m cert_host_scraper.cli
 ```
 
 ## License
 
 MIT
-
-[0]: https://python-poetry.org/
+[0]: https://python-poetry.org

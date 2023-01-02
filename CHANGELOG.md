@@ -1,3 +1,8 @@
+# 0.5.0
+
+- Add `--strip/--no-strip` to search to remove leading protocol and www
+- Upgrade dependencies
+
 # 0.4.2
 
 - Disable warnings from urllib3

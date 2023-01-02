@@ -1,4 +1,5 @@
 import logging
+import re
 from dataclasses import dataclass
 from typing import List
 
@@ -41,6 +42,7 @@ def fetch_site_information(url: str, timeout: int) -> int:
 
 
 def fetch_site(search: str) -> str:
+
     url = f"https://crt.sh/?q={search}"
     result = requests.get(url)
     result.raise_for_status()
