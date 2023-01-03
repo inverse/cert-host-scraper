@@ -2,6 +2,7 @@
 
 - Use JSON API
 - Remove unused dependencies
+- Strip trailing part of URL
 
 # 0.5.0
 
