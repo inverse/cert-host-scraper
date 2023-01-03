@@ -1,11 +1,9 @@
 import logging
-import re
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 
 import requests
 import urllib3
-from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
@@ -41,35 +39,24 @@ def fetch_site_information(url: str, timeout: int) -> int:
         return -1
 
 
-def fetch_site(search: str) -> str:
-
-    url = f"https://crt.sh/?q={search}"
+def fetch_site(search: str) -> List[Dict]:
+    url = f"https://crt.sh/?q={search}&output=json"
     result = requests.get(url)
     result.raise_for_status()
 
-    return result.content.decode()
+    return result.json()
 
 
-def scrape_urls(contents: str, options: Options) -> List[str]:
-    soup = BeautifulSoup(contents, features="html.parser")
-    tables = soup.findAll("table")
-
-    if len(tables) <= 2:
-        return []
-
-    results_table = tables[2]
-
+def scrape_urls(results: List[Dict], options: Options) -> List[str]:
     total_urls = []
-    for row in results_table.findAll("tr"):
-        cells = row.findAll("td")
-        if len(cells) == 0:
+    for result in results:
+
+        common_name = result["common_name"]
+
+        if options.clean and "*" in common_name:
             continue
 
-        matching_identity = cells[4].decode_contents()
-        if options.clean and "*" in matching_identity:
-            continue
-
-        total_urls.append(f"https://{matching_identity}")
+        total_urls.append(f"https://{common_name}")
 
     return list(set(total_urls))
 
@@ -79,6 +66,5 @@ def validate_url(url: str, options: Options) -> UrlResult:
 
 
 def fetch_urls(site: str, options: Options) -> List[str]:
-    contents = fetch_site(site)
-    urls = scrape_urls(contents, options)
-    return urls
+    results = fetch_site(site)
+    return scrape_urls(results, options)

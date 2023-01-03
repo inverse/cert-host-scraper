@@ -1,3 +1,9 @@
+# 0.6.0
+
+- Use JSON API
+- Remove unused dependencies
+- Strip trailing part of URL
+
 # 0.5.0
 
 - Add `--strip/--no-strip` to search to remove leading protocol and www
