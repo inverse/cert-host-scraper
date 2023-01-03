@@ -12,3 +12,7 @@ class TestStripUrl(TestCase):
 
     def test_strip_www(self):
         self.assertEqual("example.com", strip_url("www.example.com"))
+
+    def test_strip_path(self):
+        self.assertEqual("example.com", strip_url("example.com/"))
+        self.assertEqual("example.com", strip_url("example.com/hello"))
