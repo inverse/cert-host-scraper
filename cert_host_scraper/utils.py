@@ -1,5 +1,5 @@
 import re
-from typing import Generator, Iterable, List
+from typing import Iterable, List
 
 
 def strip_url(url: str) -> str:

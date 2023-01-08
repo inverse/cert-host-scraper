@@ -1,12 +1,11 @@
 import asyncio
 import logging
 import sys
-from time import perf_counter
 
 import click
 from requests import RequestException
 from rich.console import Console
-from rich.progress import Progress, track
+from rich.progress import track
 from rich.table import Table
 
 from cert_host_scraper import __version__

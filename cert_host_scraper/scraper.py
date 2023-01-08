@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from dataclasses import dataclass
-from typing import AsyncIterable, Dict, List
+from typing import Dict, List
 
 import requests
 import urllib3
