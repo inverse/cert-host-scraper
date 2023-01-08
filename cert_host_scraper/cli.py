@@ -1,15 +1,17 @@
+import asyncio
 import logging
 import sys
+from time import perf_counter
 
 import click
 from requests import RequestException
 from rich.console import Console
-from rich.progress import track
+from rich.progress import Progress, track
 from rich.table import Table
 
 from cert_host_scraper import __version__
 from cert_host_scraper.scraper import Options, Result, fetch_urls, validate_url
-from cert_host_scraper.utils import strip_url
+from cert_host_scraper.utils import divide_chunks, strip_url
 
 NO_STATUS_CODE_FILTER = 0
 
@@ -63,8 +65,17 @@ def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool
     try:
         urls = fetch_urls(search, options)
         click.echo(f"Found {len(urls)} URLs for {search}")
-        for url in track(urls, "Checking URLs"):
-            results.append(validate_url(url, options))
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        chunks = list(divide_chunks(urls, 10))
+        for chunk_index in track(range(len(chunks)), "Checking URLs"):
+            chunk_result = loop.run_until_complete(
+                asyncio.gather(
+                    *[validate_url(url, options) for url in chunks[chunk_index]]
+                )
+            )
+            results += chunk_result
+
     except RequestException as e:
         click.echo(f"Failed to search for results: {e}")
         sys.exit(1)

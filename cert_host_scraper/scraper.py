@@ -1,6 +1,7 @@
+import asyncio
 import logging
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import AsyncIterable, Dict, List
 
 import requests
 import urllib3
@@ -39,6 +40,10 @@ def fetch_site_information(url: str, timeout: int) -> int:
         return -1
 
 
+async def async_fetch_site_information(url: str, timeout: int) -> int:
+    return await asyncio.to_thread(fetch_site_information, url, timeout)
+
+
 def fetch_site(search: str) -> List[Dict]:
     url = f"https://crt.sh/?q={search}&output=json"
     result = requests.get(url)
@@ -61,10 +66,10 @@ def scrape_urls(results: List[Dict], options: Options) -> List[str]:
     return list(set(total_urls))
 
 
-def validate_url(url: str, options: Options) -> UrlResult:
-    return UrlResult(url, fetch_site_information(url, options.timeout))
-
-
 def fetch_urls(site: str, options: Options) -> List[str]:
     results = fetch_site(site)
     return scrape_urls(results, options)
+
+
+async def validate_url(url: str, options: Options) -> UrlResult:
+    return UrlResult(url, await async_fetch_site_information(url, options.timeout))
