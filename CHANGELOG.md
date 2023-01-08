@@ -1,3 +1,7 @@
+# 0.7.0
+
+- Async processing of requests
+
 # 0.6.0
 
 - Use JSON API
