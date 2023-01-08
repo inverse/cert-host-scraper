@@ -64,21 +64,19 @@ def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool
     results = []
     try:
         urls = fetch_urls(search, options)
-        click.echo(f"Found {len(urls)} URLs for {search}")
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        chunks = list(divide_chunks(urls, 10))
-        for chunk_index in track(range(len(chunks)), "Checking URLs"):
-            chunk_result = loop.run_until_complete(
-                asyncio.gather(
-                    *[validate_url(url, options) for url in chunks[chunk_index]]
-                )
-            )
-            results += chunk_result
-
     except RequestException as e:
         click.echo(f"Failed to search for results: {e}")
         sys.exit(1)
+
+    click.echo(f"Found {len(urls)} URLs for {search}")
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    chunks = list(divide_chunks(urls, 10))
+    for chunk_index in track(range(len(chunks)), "Checking URLs"):
+        chunk_result = loop.run_until_complete(
+            asyncio.gather(*[validate_url(url, options) for url in chunks[chunk_index]])
+        )
+        results += chunk_result
 
     result = Result(results)
     if status_code != NO_STATUS_CODE_FILTER:
