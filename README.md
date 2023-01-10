@@ -40,4 +40,5 @@ poetry run python -m cert_host_scraper.cli
 ## License
 
 MIT
+
 [0]: https://python-poetry.org
