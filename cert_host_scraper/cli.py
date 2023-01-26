@@ -87,10 +87,10 @@ def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool
     table.add_column("URL")
     table.add_column("Status Code")
     for url_result in display:
-        status_code = (
-            str(url_result.status_code) if url_result.status_code != -1 else "-"
-        )
-        table.add_row(url_result.url, status_code)
+        display_code = str(url_result.status_code)
+        if url_result.status_code == -1:
+            display_code = "-"
+        table.add_row(url_result.url, display_code)
 
     console = Console()
     console.print(table)
