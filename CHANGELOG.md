@@ -1,3 +1,7 @@
+# 0.7.2
+
+- Fix mypy issues with var reuse
+
 # 0.7.1
 
 - Change presentation of status code for non-resolved URLs from `-1` to `-`
