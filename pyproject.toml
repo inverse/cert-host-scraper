@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cert-host-scraper"
-version = "0.7.0"
+version = "0.7.1"
 description = ""
 authors = ["Malachi Soord <inverse.chi@gmail.com>"]
 license = "MIT"
