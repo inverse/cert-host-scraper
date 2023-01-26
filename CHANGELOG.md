@@ -1,3 +1,7 @@
+# 0.7.1
+
+- Change presentation of status code for non-resolved URLs from `-1` to `-`
+
 # 0.7.0
 
 - Async processing of requests
