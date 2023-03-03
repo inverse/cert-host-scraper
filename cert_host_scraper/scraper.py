@@ -7,7 +7,7 @@ import requests
 import urllib3
 
 logger = logging.getLogger(__name__)
-
+logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 urllib3.disable_warnings()
 

@@ -1,3 +1,7 @@
+# 0.7.3
+
+- Increase urllib3 log level to error to prevent noise with invalid certs
+
 # 0.7.2
 
 - Fix mypy issues with var reuse
