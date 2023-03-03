@@ -55,7 +55,6 @@ def fetch_site(search: str) -> List[Dict]:
 def scrape_urls(results: List[Dict], options: Options) -> List[str]:
     total_urls = []
     for result in results:
-
         common_name = result["common_name"]
 
         if options.clean and "*" in common_name:
