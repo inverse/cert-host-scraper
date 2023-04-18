@@ -1,3 +1,7 @@
+# 0.7.4
+
+- Validate `--status-code` between 100 and 599
+
 # 0.7.3
 
 - Increase urllib3 log level to error to prevent noise with invalid certs
