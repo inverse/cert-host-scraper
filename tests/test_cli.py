@@ -33,3 +33,13 @@ class TestSearch(TestCase):
         runner = CliRunner()
         result = runner.invoke(cli, ["search", "example.com", "--status-code", "xyz"])
         self.assertEqual(result.exit_code, 2)
+
+    def test_search_lower_invalid_status_code(self):
+        runner = CliRunner()
+        result = runner.invoke(cli, ["search", "example.com", "--status-code", "99"])
+        self.assertEqual(result.exit_code, 2)
+
+    def test_search_upper_invalid_status_code(self):
+        runner = CliRunner()
+        result = runner.invoke(cli, ["search", "example.com", "--status-code", "600"])
+        self.assertEqual(result.exit_code, 2)

@@ -19,7 +19,9 @@ def validate_status_code(
     _ctx: click.core.Context, _param: click.core.Option, value: str
 ):
     try:
-        return int(value)
+        status_code = int(value)
+        if not (100 <= status_code <= 599):
+            raise click.BadParameter("status code must be between 100 and 599")
     except ValueError:
         raise click.BadParameter("must be an integer")
     except TypeError:
