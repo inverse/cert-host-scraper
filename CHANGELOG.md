@@ -1,3 +1,7 @@
+# 0.7.5
+
+- Fix `--status-code` filter
+- 
 # 0.7.4
 
 - Validate `--status-code` between 100 and 599
