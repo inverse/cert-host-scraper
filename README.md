@@ -6,14 +6,14 @@
 [![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Query the certificate transparency log from [crt.sh](https://crt.sh) by a given a keyword and returns the status code of the matched results. Optionally filtering the results by status code.
+Query the certificate transparency log from [crt.sh](https://crt.sh) by a given a keyword and returns the status code of the matched results. Optionally, filtering the results by status code.
 
 <img alt="Demo of cert-host-scraper" src="https://i.imgur.com/Co3aTfO.gif" width="800" />
 
 ## Usage
 
 ```bash
-cert-host-scraper search your-domain.com [--status-code 200] [--clean/--no-clean]
+cert-host-scraper search your-domain.com [--status-code 200]
 ```
 
 ## Installation
@@ -32,7 +32,7 @@ pip install cert-host-scraper
 
 ## Development
 
-Requires [poetry][0] and Python 3.10.
+Requires [poetry][0] and Python 3.10+.
 
 ```
 poetry install
