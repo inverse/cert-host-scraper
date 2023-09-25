@@ -4,6 +4,7 @@ import sys
 
 import click
 from requests import RequestException
+from rich import box
 from rich.console import Console
 from rich.progress import track
 from rich.table import Table
@@ -87,14 +88,20 @@ def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool
     else:
         display = result.scraped
 
-    table = Table(show_header=True, header_style="bold")
+    table = Table(show_header=True, header_style="bold", box=box.MINIMAL)
     table.add_column("URL")
     table.add_column("Status Code")
     for url_result in display:
         display_code = str(url_result.status_code)
         if url_result.status_code == -1:
             display_code = "-"
-        table.add_row(url_result.url, display_code)
+
+        url = url_result.url
+        if url_result.status_code == 200:
+            display_code = f"[green]{display_code}[/green]"
+            url = f"[green]{url}[/green]"
+
+        table.add_row(url, display_code)
 
     console = Console()
     console.print(table)
