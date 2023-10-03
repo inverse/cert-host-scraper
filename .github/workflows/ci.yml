@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: ['3.11', '3.10']
+        python-version: ['3.12', '3.11', '3.10']
     steps:
     - uses: actions/checkout@master
     - uses: actions/cache@v3
