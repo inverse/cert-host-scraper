@@ -7,6 +7,11 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-20.04
+    environment:
+      name: pypi
+      url: https://pypi.org/p/cert-host-scraper
+    permissions:
+      id-token: write
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-python@v5
@@ -24,6 +29,3 @@ jobs:
         poetry build
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@v1.8.11
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_token }}
