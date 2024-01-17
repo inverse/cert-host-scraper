@@ -56,7 +56,19 @@ def cli(debug: bool):
     help="Remove protocol and leading www from search",
     default=True,
 )
-def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool):
+@click.option(
+    "--batch-size",
+    help="Number of URLs to process at once",
+    default=20,
+)
+def search(
+    search: str,
+    status_code: int,
+    timeout: int,
+    clean: bool,
+    strip: bool,
+    batch_size: int,
+):
     """
     Search the certificate transparency log.
     """
@@ -75,7 +87,7 @@ def search(search: str, status_code: int, timeout: int, clean: bool, strip: bool
     click.echo(f"Found {len(urls)} URLs for {search}")
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    chunks = list(divide_chunks(urls, 10))
+    chunks = list(divide_chunks(urls, batch_size))
     for chunk_index in track(range(len(chunks)), "Checking URLs"):
         chunk_result = loop.run_until_complete(
             asyncio.gather(*[validate_url(url, options) for url in chunks[chunk_index]])
