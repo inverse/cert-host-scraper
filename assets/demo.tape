@@ -1,10 +1,10 @@
 Output demo.gif
 
-Set FontSize 16
+Set FontSize 22
 Set Width 1280
 Set Height 500
 
-Type "cert-host-scraper search example.org --help"
+Type "cert-host-scraper search --help"
 Sleep 500ms
 Enter
 Sleep 5s
