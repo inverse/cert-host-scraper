@@ -8,10 +8,7 @@
 
 Query the certificate transparency log from [crt.sh](https://crt.sh) by a given a keyword and returns the status code of the matched results. Optionally, filtering the results by status code.
 
-<img src="https://vhs.charm.sh/vhs-2ydBNtAvkn9scXe06ngbSm.gif" alt="Made with VHS">
-<a href="https://vhs.charm.sh">
-<img src="https://stuff.charm.sh/vhs/badge.svg">
-</a>
+<img alt="Demo of cert-host-scraper" src="https://vhs.charm.sh/vhs-2ydBNtAvkn9scXe06ngbSm.gif" width="800" />
         
 
 ## Usage
