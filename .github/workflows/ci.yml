@@ -28,7 +28,7 @@ jobs:
         poetry-version: '1.6.1'
     - name: Install pip dependencies
       run: poetry install
-    - uses: pre-commit/action@v3.0.0
+    - uses: pre-commit/action@v3.0.1
   test:
     runs-on: ubuntu-20.04
     strategy:
