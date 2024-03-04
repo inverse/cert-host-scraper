@@ -28,4 +28,4 @@ jobs:
         poetry version ${{ github.event.release.tag_name }}
         poetry build
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.8.11
+      uses: pypa/gh-action-pypi-publish@v1.8.12
