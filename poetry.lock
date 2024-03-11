@@ -353,17 +353,17 @@ testing = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygm
 
 [[package]]
 name = "pytest-socket"
-version = "0.6.0"
+version = "0.7.0"
 description = "Pytest Plugin to disable socket calls during tests"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pytest_socket-0.6.0-py3-none-any.whl", hash = "sha256:cca72f134ff01e0023c402e78d31b32e68da3efdf3493bf7788f8eba86a6824c"},
-    {file = "pytest_socket-0.6.0.tar.gz", hash = "sha256:363c1d67228315d4fc7912f1aabfd570de29d0e3db6217d61db5728adacd7138"},
+    {file = "pytest_socket-0.7.0-py3-none-any.whl", hash = "sha256:7e0f4642177d55d317bbd58fc68c6bd9048d6eadb2d46a89307fa9221336ce45"},
+    {file = "pytest_socket-0.7.0.tar.gz", hash = "sha256:71ab048cbbcb085c15a4423b73b619a8b35d6a307f46f78ea46be51b1b7e11b3"},
 ]
 
 [package.dependencies]
-pytest = ">=3.6.3"
+pytest = ">=6.2.5"
 
 [[package]]
 name = "pyyaml"
@@ -688,4 +688,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "f5ad41663f49bcfac0fe4afa6e6b88d6bed9126f813a82d90a90ef5cae919dc0"
+content-hash = "896bdea5fd811bbf99400df7bda0a1b45ab620862a353a093fb3f0e0ff5e5c7d"
