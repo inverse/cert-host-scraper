@@ -14,13 +14,17 @@ jobs:
       id-token: write
     steps:
     - uses: actions/checkout@master
+    - name: Parse .tool-versions
+      uses: wistia/parse-tool-versions@v2.0.0
+      with:
+        prefix: 'tool_version_'
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: ${{ env.TOOL_VERSION_PYTHON }}
     - name: Install poetry
       uses: abatilo/actions-poetry@v3.0.0
       with:
-        poetry-version: '1.6.1'
+        poetry-version: ${{ env.TOOL_VERSION_POETRY }}
     - name: Install pip dependencies
       run: poetry install
     - name: Package
