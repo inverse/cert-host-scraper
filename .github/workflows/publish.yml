@@ -15,16 +15,15 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Parse .tool-versions
-      uses: wistia/parse-tool-versions@v2.0.0
-      with:
-        prefix: 'tool_version_'
+      uses: paulo-ferraz-oliveira/parse-tool-versions@v1
+      id: tool-versions
     - uses: actions/setup-python@v5
       with:
-        python-version: ${{ env.TOOL_VERSION_PYTHON }}
+        python-version: ${{ steps.tool-versions.outputs.python }}
     - name: Install poetry
       uses: abatilo/actions-poetry@v3.0.0
       with:
-        poetry-version: ${{ env.TOOL_VERSION_POETRY }}
+        poetry-version: ${{ steps.tool-versions.outputs.poetry }}
     - name: Install pip dependencies
       run: poetry install
     - name: Package
