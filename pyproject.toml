@@ -21,7 +21,7 @@ rich = ">=11,<14"
 single-source = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.3.2"
+pytest = "^8.3.3"
 pytest-socket = "^0.7.0"
 vcrpy = "^6.0.1"
 
