@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import sys
 
@@ -61,6 +62,9 @@ def cli(debug: bool):
     help="Number of URLs to process at once",
     default=20,
 )
+@click.option(
+    "--output", type=click.Choice(["table", "json"]), required=True, default="table"
+)
 def search(
     search: str,
     status_code: int,
@@ -68,6 +72,7 @@ def search(
     clean: bool,
     strip: bool,
     batch_size: int,
+    output: str,
 ):
     """
     Search the certificate transparency log.
@@ -75,7 +80,10 @@ def search(
     if strip:
         search = strip_url(search)
 
-    click.echo(f"Searching for {search}")
+    display_json = output == "json"
+
+    if not display_json:
+        click.echo(f"Searching for {search}")
     options = Options(timeout, clean)
     results = []
     try:
@@ -84,11 +92,12 @@ def search(
         click.echo(f"Failed to search for results: {e}")
         sys.exit(1)
 
-    click.echo(f"Found {len(urls)} URLs for {search}")
+    if not display_json:
+        click.echo(f"Found {len(urls)} URLs for {search}")
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     chunks = list(divide_chunks(urls, batch_size))
-    for chunk_index in track(range(len(chunks)), "Checking URLs"):
+    for chunk_index in track(range(len(chunks)), "Checking URLs", disable=display_json):
         chunk_result = loop.run_until_complete(
             asyncio.gather(*[validate_url(url, options) for url in chunks[chunk_index]])
         )
@@ -100,23 +109,30 @@ def search(
     else:
         display = result.scraped
 
-    table = Table(show_header=True, header_style="bold", box=box.MINIMAL)
-    table.add_column("URL")
-    table.add_column("Status Code")
-    for url_result in display:
-        display_code = str(url_result.status_code)
-        if url_result.status_code == -1:
-            display_code = "-"
+    if display_json:
+        json_output = [
+            {"url": url_result.url, "status_code": url_result.status_code}
+            for url_result in display
+        ]
+        click.echo(json.dumps(json_output, indent=2))
+    else:
+        table = Table(show_header=True, header_style="bold", box=box.MINIMAL)
+        table.add_column("URL")
+        table.add_column("Status Code")
+        for url_result in display:
+            display_code = str(url_result.status_code)
+            if url_result.status_code == -1:
+                display_code = "-"
 
-        url = url_result.url
-        if url_result.status_code == 200:
-            display_code = f"[green]{display_code}[/green]"
-            url = f"[green]{url}[/green]"
+            url = url_result.url
+            if url_result.status_code == 200:
+                display_code = f"[green]{display_code}[/green]"
+                url = f"[green]{url}[/green]"
 
-        table.add_row(url, display_code)
+            table.add_row(url, display_code)
 
-    console = Console()
-    console.print(table)
+        console = Console()
+        console.print(table)
 
 
 if __name__ == "__main__":
