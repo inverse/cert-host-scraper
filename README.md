@@ -1,6 +1,6 @@
 # Cert Host Scraper
 
-![CI](https://github.com/inverse/cert-host-scraper/workflows/CI/badge.svg)
+[![CI](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/cert-host-scraper.svg)](https://badge.fury.io/py/cert-host-scraper)
 ![PyPI downloads](https://img.shields.io/pypi/dm/cert-host-scraper?label=pypi%20downloads)
 [![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
