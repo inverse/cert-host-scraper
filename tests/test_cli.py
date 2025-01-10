@@ -43,3 +43,8 @@ class TestSearch(TestCase):
         runner = CliRunner()
         result = runner.invoke(cli, ["search", "example.com", "--status-code", "600"])
         self.assertEqual(result.exit_code, 2)
+
+    def test_invalid_output(self):
+        runner = CliRunner()
+        result = runner.invoke(cli, ["search", "example.com", "--output", "csv"])
+        self.assertEqual(result.exit_code, 2)

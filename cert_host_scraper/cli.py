@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import sys
+from enum import StrEnum
 
 import click
 from requests import RequestException
@@ -30,6 +31,15 @@ def validate_status_code(
         raise click.BadParameter("must be an integer")
     except TypeError:
         return NO_STATUS_CODE_FILTER
+
+
+class Output(StrEnum):
+    TABLE = "table"
+    JSON = "json"
+
+    @classmethod
+    def values(cls) -> list:
+        return list(map(str, cls))
 
 
 @click.group()
@@ -63,7 +73,7 @@ def cli(debug: bool):
     default=20,
 )
 @click.option(
-    "--output", type=click.Choice(["table", "json"]), required=True, default="table"
+    "--output", type=click.Choice(Output.values()), required=True, default="table"
 )
 def search(
     search: str,
@@ -80,7 +90,7 @@ def search(
     if strip:
         search = strip_url(search)
 
-    display_json = output == "json"
+    display_json = output == Output.JSON
 
     if not display_json:
         click.echo(f"Searching for {search}")
