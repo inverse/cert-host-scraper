@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import sys
-from enum import StrEnum
 
 import click
 from requests import RequestException
@@ -33,13 +32,13 @@ def validate_status_code(
         return NO_STATUS_CODE_FILTER
 
 
-class Output(StrEnum):
+class Output:
     TABLE = "table"
     JSON = "json"
 
     @classmethod
     def values(cls) -> list:
-        return list(map(str, cls))
+        return [cls.TABLE, cls.JSON]
 
 
 @click.group()
