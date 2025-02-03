@@ -25,6 +25,9 @@ pytest = "^8.3.4"
 pytest-socket = "^0.7.0"
 vcrpy = "^7.0.0"
 
+[tool.poetry.group.dev.dependencies]
+pytest-cov = "^6.0.0"
+
 [tool.ruff]
 lint.ignore = ["E501"]
 
