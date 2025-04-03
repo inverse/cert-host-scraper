@@ -17,7 +17,7 @@ cert-host-scraper = "cert_host_scraper.cli:cli"
 python = "^3.10"
 requests = "^2.27.1"
 click = "^8.1.8"
-rich = ">=11,<14"
+rich = ">=11,<15"
 single-source = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
