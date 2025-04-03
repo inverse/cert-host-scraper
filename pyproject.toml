@@ -1,16 +1,18 @@
-[tool.poetry]
+[project]
 name = "cert-host-scraper"
 version = "0.0.0"
-description = ""
-authors = ["Malachi Soord <inverse.chi@gmail.com>"]
+description = "Query the certificate transparency log from crt.sh by a given a keyword and returns the status code of the matched results. Optionally, filtering the results by status code."
+authors = [
+    {name = "Malachi Soord", email = "inverse.chi@gmail.com"}
+]
 license = "MIT"
-
 readme = "README.md"
 repository = "https://github.com/inverse/cert-host-scraper"
 homepage = "https://github.com/inverse/cert-host-scraper"
+dynamic = [ "dependencies" ]
+requires-python = "^3.10"
 
-
-[tool.poetry.scripts]
+[project.scripts]
 cert-host-scraper = "cert_host_scraper.cli:cli"
 
 [tool.poetry.dependencies]
@@ -20,13 +22,12 @@ click = "^8.1.8"
 rich = ">=11,<15"
 single-source = "^0.4.0"
 
-[tool.poetry.dev-dependencies]
-pytest = "^8.3.5"
-pytest-socket = "^0.7.0"
-vcrpy = "^7.0.0"
 
 [tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
 pytest-cov = "^6.0.0"
+pytest-socket = "^0.7.0"
+vcrpy = "^7.0.0"
 
 [tool.ruff]
 lint.ignore = ["E501"]
