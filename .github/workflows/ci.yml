@@ -16,13 +16,14 @@ jobs:
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ steps.tool-versions.outputs.python }}
     - name: Install poetry
       uses: abatilo/actions-poetry@v4.0.0
       with:
         poetry-version: ${{ steps.tool-versions.outputs.poetry }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '${{ matrix.python-version }}'
+        cache: 'poetry'
     - name: Install pip dependencies
       run: poetry install
     - uses: pre-commit/action@v3.0.1
@@ -36,14 +37,14 @@ jobs:
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '${{ matrix.python-version }}'
-        cache: 'poetry'
     - name: Install poetry
       uses: abatilo/actions-poetry@v4.0.0
       with:
         poetry-version: ${{ steps.tool-versions.outputs.poetry }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '${{ matrix.python-version }}'
+        cache: 'poetry'
     - name: Install pip dependencies
       run: poetry install
     - name: Run tests
