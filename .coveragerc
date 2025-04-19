@@ -1,0 +1,9 @@
+[run]
+source = cert_host_scraper
+omit =
+    tests/*
+
+
+[report]
+# Show missing lines of coverage in the report.
+show_missing = True
