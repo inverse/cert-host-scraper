@@ -3,6 +3,7 @@
 [![CI](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/cert-host-scraper.svg)](https://badge.fury.io/py/cert-host-scraper)
 ![PyPI downloads](https://img.shields.io/pypi/dm/cert-host-scraper?label=pypi%20downloads)
+[![codecov](https://codecov.io/github/inverse/cert-host-scraper/graph/badge.svg?token=TLO58M5UC5)](https://codecov.io/github/inverse/cert-host-scraper)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![Static Badge](https://img.shields.io/badge/type%20checked-mypy-039dfc)
 [![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
