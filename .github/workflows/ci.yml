@@ -16,13 +16,14 @@ jobs:
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ steps.tool-versions.outputs.python }}
     - name: Install poetry
       uses: abatilo/actions-poetry@v4.0.0
       with:
         poetry-version: ${{ steps.tool-versions.outputs.poetry }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '${{ matrix.python-version }}'
+        cache: 'poetry'
     - name: Install pip dependencies
       run: poetry install
     - uses: pre-commit/action@v3.0.1
@@ -33,22 +34,17 @@ jobs:
         python-version: ['3.13', '3.12', '3.11', '3.10']
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/cache@v4
-      with:
-        path: ~/.local/share/virtualenvs
-        key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '${{ matrix.python-version }}'
     - name: Install poetry
       uses: abatilo/actions-poetry@v4.0.0
       with:
         poetry-version: ${{ steps.tool-versions.outputs.poetry }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '${{ matrix.python-version }}'
+        cache: 'poetry'
     - name: Install pip dependencies
       run: poetry install
     - name: Run tests
