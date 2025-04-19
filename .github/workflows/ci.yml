@@ -9,6 +9,14 @@ env:
   FORCE_COLOR: 1
 
 jobs:
+  get_path:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print workspace path (Python)
+        run: python -c "import os; print(os.environ.get('GITHUB_WORKSPACE'))"
   lint:
     runs-on: ubuntu-24.04
     steps:
@@ -37,8 +45,6 @@ jobs:
       with:
         path: ~/.local/share/virtualenvs
         key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
