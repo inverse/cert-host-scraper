@@ -12,7 +12,7 @@ jobs:
   lint:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
@@ -33,7 +33,7 @@ jobs:
       matrix:
         python-version: ['3.13', '3.12', '3.11', '3.10']
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Parse .tool-versions
       uses: paulo-ferraz-oliveira/parse-tool-versions@v1
       id: tool-versions
