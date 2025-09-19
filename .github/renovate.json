@@ -4,6 +4,7 @@
   "extends": [
     "config:recommended"
   ],
+  "automerge": true,
   "pre-commit": {
     "enabled": true
   }
