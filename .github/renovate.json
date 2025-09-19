@@ -1,9 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "rebaseWhen": "behind-base-branch",
+  "dependencyDashboard": true,
   "extends": [
-    "config:recommended"
-  ],
+    "group:recommended",
+    "replacements:all",
+    "workarounds:all"
+  ]
   "pre-commit": {
     "enabled": true
   }
