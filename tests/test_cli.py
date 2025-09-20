@@ -1,13 +1,14 @@
 import json
 from unittest import TestCase
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
+import pytest
 from click.testing import CliRunner
 from requests import RequestException
 
 from cert_host_scraper import __version__
-from cert_host_scraper.cli import cli, search
-from cert_host_scraper.scraper import UrlResult
+from cert_host_scraper.cli import cli, process_urls, search
+from cert_host_scraper.scraper import Options, UrlResult
 
 
 class TestVersion(TestCase):
@@ -56,7 +57,6 @@ class TestSearchSuccess(TestCase):
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
     def test_search_table_output(self, mock_fetch_urls: Mock, mock_process_urls: Mock):
-        # Arrange
         runner = CliRunner()
         urls = [
             "https://example-200.com",
@@ -71,12 +71,10 @@ class TestSearchSuccess(TestCase):
             UrlResult("https://example-error.com", -1),
         ]
 
-        # Act
         result = runner.invoke(search, ["example.com", "--output", "table"])
 
-        # Assert
         self.assertEqual(result.exit_code, 0)
-        # Check output
+
         output = result.output
         self.assertIn("Searching for example.com", output)
         self.assertIn(f"Found {len(urls)} URLs for example.com", output)
@@ -92,7 +90,6 @@ class TestSearchSuccess(TestCase):
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
     def test_search_json_output(self, mock_fetch_urls: Mock, mock_process_urls: Mock):
-        # Arrange
         runner = CliRunner()
         urls = ["https://example-200.com", "https://example-404.com"]
         mock_fetch_urls.return_value = urls
@@ -102,10 +99,8 @@ class TestSearchSuccess(TestCase):
             UrlResult("https://example-404.com", 404),
         ]
 
-        # Act
         result = runner.invoke(search, ["example.com", "--output", "json"])
 
-        # Assert
         self.assertEqual(result.exit_code, 0)
         expected_json = [
             {"url": "https://example-200.com", "status_code": 200},
@@ -113,3 +108,53 @@ class TestSearchSuccess(TestCase):
         ]
         output_json = json.loads(result.output)
         self.assertCountEqual(output_json, expected_json)
+
+    @patch("cert_host_scraper.cli.process_urls")
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_search_status_code_200(
+        self, mock_fetch_urls: Mock, mock_process_urls: Mock
+    ):
+        runner = CliRunner()
+        urls = [
+            "https://example-200.com",
+            "https://example-404.com",
+            "https://example-error.com",
+        ]
+        mock_fetch_urls.return_value = urls
+
+        mock_process_urls.return_value = [
+            UrlResult("https://example-200.com", 200),
+            UrlResult("https://example-404.com", 404),
+            UrlResult("https://example-error.com", -1),
+        ]
+
+        result = runner.invoke(
+            search, ["example.com", "--status-code", "200", "--output", "json"]
+        )
+
+        self.assertEqual(result.exit_code, 0)
+        expected_json = [
+            {"url": "https://example-200.com", "status_code": 200},
+        ]
+        output_json = json.loads(result.output)
+        self.assertCountEqual(output_json, expected_json)
+
+    @pytest.mark.asyncio
+    @patch("cert_host_scraper.cli.validate_url", new_callable=AsyncMock)
+    def test_process_urls(self, mock_validate_url: AsyncMock):
+        urls = ["http://example.com", "http://test.com"]
+        options = Options(timeout=2, clean=True)
+        batch_size = 1
+        show_progress = False
+
+        mock_validate_url.side_effect = [
+            UrlResult(url="http://example.com", status_code=200),
+            UrlResult(url="http://test.com", status_code=404),
+        ]
+
+        results = process_urls(urls, options, batch_size, show_progress)
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0].url, "http://example.com")
+        self.assertEqual(results[0].status_code, 200)
+        self.assertEqual(results[1].url, "http://test.com")
+        self.assertEqual(results[1].status_code, 404)
