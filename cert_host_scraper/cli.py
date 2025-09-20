@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import sys
+from typing import List
 
 import click
 from requests import RequestException
@@ -9,8 +10,6 @@ from rich import box
 from rich.console import Console
 from rich.progress import track
 from rich.table import Table
-
-from typing import List
 
 from cert_host_scraper import __version__
 from cert_host_scraper.scraper import (
