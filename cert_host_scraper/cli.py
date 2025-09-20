@@ -10,11 +10,48 @@ from rich.console import Console
 from rich.progress import track
 from rich.table import Table
 
+from typing import List
+
 from cert_host_scraper import __version__
-from cert_host_scraper.scraper import Options, Result, fetch_urls, validate_url
+from cert_host_scraper.scraper import (
+    Options,
+    Result,
+    UrlResult,
+    fetch_urls,
+    validate_url,
+)
 from cert_host_scraper.utils import divide_chunks, strip_url
 
 NO_STATUS_CODE_FILTER = 0
+
+
+def process_urls(
+    urls: List[str], options: Options, batch_size: int, show_progress: bool
+) -> List[UrlResult]:
+    """
+    Process a list of URLs concurrently and return the results.
+    """
+    results = []
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+    chunks = list(divide_chunks(urls, batch_size))
+
+    progress_iterable = range(len(chunks))
+    if show_progress:
+        progress_iterable = track(progress_iterable, "Checking URLs")
+
+    for chunk_index in progress_iterable:
+        chunk = chunks[chunk_index]
+        chunk_result = loop.run_until_complete(
+            asyncio.gather(*[validate_url(url, options) for url in chunk])
+        )
+        results.extend(chunk_result)
+
+    return results
 
 
 def validate_status_code(
@@ -94,7 +131,7 @@ def search(
     if not display_json:
         click.echo(f"Searching for {search}")
     options = Options(timeout, clean)
-    results = []
+
     try:
         urls = fetch_urls(search, options)
     except RequestException as e:
@@ -103,16 +140,12 @@ def search(
 
     if not display_json:
         click.echo(f"Found {len(urls)} URLs for {search}")
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    chunks = list(divide_chunks(urls, batch_size))
-    for chunk_index in track(range(len(chunks)), "Checking URLs", disable=display_json):
-        chunk_result = loop.run_until_complete(
-            asyncio.gather(*[validate_url(url, options) for url in chunks[chunk_index]])
-        )
-        results += chunk_result
 
-    result = Result(results)
+    scraped_results = process_urls(
+        urls, options, batch_size, show_progress=not display_json
+    )
+
+    result = Result(scraped_results)
     if status_code != NO_STATUS_CODE_FILTER:
         display = result.filter_by_status_code(status_code)
     else:
