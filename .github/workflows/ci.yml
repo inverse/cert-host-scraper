@@ -32,9 +32,6 @@ jobs:
       with:
         python-version: '${{ matrix.python-version }}'
         cache: 'poetry'
-    - run: |
-        python --version
-        echo 'Python: ${{ steps.setup-python.outputs.python-version }}'
     - name: Install pip dependencies
       run: poetry install
     - name: Run tests
