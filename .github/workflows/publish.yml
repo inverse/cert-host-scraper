@@ -23,7 +23,6 @@ jobs:
         poetry-version: ${{ steps.tool-versions.outputs.poetry }}
     - uses: actions/setup-python@v6
       with:
-        python-version: '${{ matrix.python-version }}'
         cache: 'poetry'
     - name: Install pip dependencies
       run: poetry install
