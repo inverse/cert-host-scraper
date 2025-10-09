@@ -14,18 +14,14 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - uses: jdx/mise-action@v3
-    - name: Configure poetry
-      run: |
-        poetry config virtualenvs.create true
-        poetry config virtualenvs.in-project true
     - name: Install pip dependencies
-      run: poetry install
+      run: uv sync
     - uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit/
         key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
     - name: Run pre-commit
-      run: poetry run pre-commit run --all-files --show-diff-on-failure
+      run: pre-commit run --all-files --show-diff-on-failure
   test:
     runs-on: ubuntu-24.04
     strategy:
@@ -40,11 +36,11 @@ jobs:
     - uses: actions/setup-python@v6
       with:
         python-version: '${{ matrix.python-version }}'
-        cache: 'poetry'
+        cache: 'pip'
     - name: Install pip dependencies
-      run: poetry install
+      run: uv sync
     - name: Run tests
-      run: poetry run pytest --cov --junitxml=junit.xml -o junit_family=legacy --cov-branch --cov-report=xml
+      run: uv run pytest --cov --junitxml=junit.xml -o junit_family=legacy --cov-branch --cov-report=xml
     - name: Upload coverage reports to Codecov
       if: ${{ !cancelled() && matrix.python-version == steps.project-python-version.outputs.python-version }}
       uses: codecov/codecov-action@v5
