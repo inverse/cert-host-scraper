@@ -7,6 +7,8 @@ on:
 
 env:
   FORCE_COLOR: 1
+  UV_PYTHON_PREFERENCE: only-system
+  MISE_IDIOMATIC_VERSION_FILE_ENABLE_TOOLS: python
 
 jobs:
   lint:
@@ -26,7 +28,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: ['3.13', '3.12', '3.11', '3.10']
+        python-version: ['3.14', '3.13', '3.12', '3.11', '3.10']
     steps:
     - uses: actions/checkout@v5
     - uses: jdx/mise-action@v3
