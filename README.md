@@ -34,18 +34,18 @@ pip install cert-host-scraper
 
 ## Development
 
-Requires [poetry][0] and Python 3.10+.
+Requires [uv][0] and Python 3.10+.
 
 ```bash
-poetry install
-poetry run python -m cert_host_scraper.cli
+uv install
+uv run python -m cert_host_scraper.cli
 ```
 
-Python and poetry versions are managed [mise][1] as defined in the provided `.tool-versions` file.
+All dev tooling is managed [mise][1] as defined in the provided `mise.toml` and `.python-version` files.
 
 ## License
 
 MIT
 
-[0]: https://python-poetry.org
+[0]: https://github.com/astral-sh/uv
 [1]: https://github.com/jdx/mise
