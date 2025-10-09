@@ -36,10 +36,9 @@ jobs:
     - name: Project python version
       id: project-python-version
       run: echo "python-version=$(cat .python-version)" >> $GITHUB_OUTPUT
-    - uses: actions/setup-python@v6
-      with:
-        python-version: '${{ matrix.python-version }}'
-        cache: 'pip'
+    - name: Install python
+      run:
+        mise install python@${{ matrix.python-version }}
     - name: Install pip dependencies
       run: uv sync
     - name: Run tests
