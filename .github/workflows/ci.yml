@@ -37,7 +37,7 @@ jobs:
       id: project-python-version
       run: echo "python-version=$(cat .python-version)" >> $GITHUB_OUTPUT
     - name: Install python
-      run:
+      run: |
         mise install python@${{ matrix.python-version }}
         python --version
         mise reshim
