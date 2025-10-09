@@ -11,6 +11,8 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-24.04
+    env:
+        MISE_IDIOMATIC_VERSION_FILE_ENABLE_TOOLS: python
     steps:
     - uses: actions/checkout@v5
     - uses: jdx/mise-action@v3
@@ -26,17 +28,16 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: ['3.13', '3.12', '3.11', '3.10']
+        python-version: ['3.14', '3.13', '3.12', '3.11', '3.10']
     steps:
     - uses: actions/checkout@v5
     - uses: jdx/mise-action@v3
     - name: Project python version
       id: project-python-version
       run: echo "python-version=$(cat .python-version)" >> $GITHUB_OUTPUT
-    - uses: actions/setup-python@v6
-      with:
-        python-version: '${{ matrix.python-version }}'
-        cache: 'pip'
+    - name: Install python
+      run: |
+        mise install python@${{ matrix.python-version }}
     - name: Install pip dependencies
       run: uv sync
     - name: Run tests

@@ -4,6 +4,9 @@ on:
   release:
     types: [published]
 
+env:
+  MISE_IDIOMATIC_VERSION_FILE_ENABLE_TOOLS: python
+
 jobs:
   publish:
     runs-on: ubuntu-24.04
