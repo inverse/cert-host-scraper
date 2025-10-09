@@ -5,7 +5,6 @@ on:
     types: [published]
 
 env:
-  UV_PYTHON_PREFERENCE: only-system
   MISE_IDIOMATIC_VERSION_FILE_ENABLE_TOOLS: python
 
 jobs:

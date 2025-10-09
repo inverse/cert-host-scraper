@@ -7,7 +7,6 @@ on:
 
 env:
   FORCE_COLOR: 1
-  UV_PYTHON_PREFERENCE: only-system
 
 jobs:
   lint:
@@ -39,8 +38,6 @@ jobs:
     - name: Install python
       run: |
         mise install python@${{ matrix.python-version }}
-        python --version
-        mise reshim
     - name: Install pip dependencies
       run: uv sync
     - name: Run tests
