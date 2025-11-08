@@ -7,6 +7,13 @@ repos:
   - id: check-yaml
   - id: check-toml
   - id: check-added-large-files
+- repo: https://github.com/commitizen-tools/commitizen
+  rev: v4.9.1
+  hooks:
+    - id: commitizen
+      stages: [commit-msg]
+    - id: commitizen-branch
+      stages: [pre-push]
 - repo: https://github.com/pre-commit/mirrors-isort
   rev: v5.10.1
   hooks:
