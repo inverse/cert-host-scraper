@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, List
+from collections.abc import Iterable
 
 
 def strip_url(url: str) -> str:
@@ -8,6 +8,6 @@ def strip_url(url: str) -> str:
     return re.sub(r"/.*", "", url)
 
 
-def divide_chunks(objects: list, size: int) -> Iterable[List[str]]:
+def divide_chunks(objects: list, size: int) -> Iterable[list[str]]:
     for i in range(0, len(objects), size):
         yield objects[i : i + size]

@@ -1,7 +1,6 @@
 import asyncio
 import logging
 from dataclasses import dataclass
-from typing import Dict, List
 
 import requests
 import urllib3
@@ -26,9 +25,9 @@ class UrlResult:
 
 @dataclass
 class Result:
-    scraped: List[UrlResult]
+    scraped: list[UrlResult]
 
-    def filter_by_status_code(self, status_code: int) -> List[UrlResult]:
+    def filter_by_status_code(self, status_code: int) -> list[UrlResult]:
         return [result for result in self.scraped if result.status_code == status_code]
 
 
@@ -44,7 +43,7 @@ async def async_fetch_site_information(url: str, timeout: int) -> int:
     return await asyncio.to_thread(fetch_site_information, url, timeout)
 
 
-def fetch_site(search: str) -> List[Dict]:
+def fetch_site(search: str) -> list[dict]:
     url = f"https://crt.sh/?q={search}&output=json"
     result = requests.get(url)
     result.raise_for_status()
@@ -52,7 +51,7 @@ def fetch_site(search: str) -> List[Dict]:
     return result.json()
 
 
-def scrape_urls(results: List[Dict], options: Options) -> List[str]:
+def scrape_urls(results: list[dict], options: Options) -> list[str]:
     total_urls = []
     for result in results:
         common_name = result["common_name"]
@@ -65,7 +64,7 @@ def scrape_urls(results: List[Dict], options: Options) -> List[str]:
     return list(set(total_urls))
 
 
-def fetch_urls(site: str, options: Options) -> List[str]:
+def fetch_urls(site: str, options: Options) -> list[str]:
     results = fetch_site(site)
     return scrape_urls(results, options)
 
