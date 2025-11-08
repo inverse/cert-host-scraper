@@ -33,10 +33,27 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.ruff]
-lint.ignore = ["E501"]
+target-version = "py310"
 
-[tool.isort]
-profile = "black"
+
+[tool.ruff.lint]
+select = [
+    "F",    # Pyflakes (replaces flake8's core)
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "I",    # isort (import sorting)
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "SIM",  # flake8-simplify
+    "UP",   # pyupgrade
+    "PL",   # Pylint rules
+    "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "E501",
+    "PLR0913",
+    "PLR2004",
+]
 
 [tool.pyright]
 venvPath = "."

@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import sys
-from typing import List
 
 import click
 from requests import RequestException
@@ -25,8 +24,8 @@ NO_STATUS_CODE_FILTER = 0
 
 
 def process_urls(
-    urls: List[str], options: Options, batch_size: int, show_progress: bool
-) -> List[UrlResult]:
+    urls: list[str], options: Options, batch_size: int, show_progress: bool
+) -> list[UrlResult]:
     """
     Process a list of URLs concurrently and return the results.
     """
@@ -62,8 +61,8 @@ def validate_status_code(
             raise click.BadParameter("status code must be between 100 and 599")
 
         return status_code
-    except ValueError:
-        raise click.BadParameter("must be an integer")
+    except ValueError as e:
+        raise click.BadParameter("must be an integer") from e
     except TypeError:
         return NO_STATUS_CODE_FILTER
 

@@ -14,11 +14,13 @@ repos:
       stages: [commit-msg]
     - id: commitizen-branch
       stages: [pre-push]
-- repo: https://github.com/pre-commit/mirrors-isort
-  rev: v5.10.1
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: 'v0.14.4'
   hooks:
-  - id: isort
-    additional_dependencies: [toml]
+  - id: ruff-check
+    args:
+      - '--fix'
+  - id: ruff-format
 - repo: https://github.com/pre-commit/mirrors-mypy
   rev: v1.18.2
   hooks:
@@ -28,10 +30,3 @@ repos:
   rev: v1.1.407
   hooks:
   - id: pyright
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: 'v0.14.4'
-  hooks:
-  - id: ruff
-    args:
-      - '--fix'
-  - id: ruff-format
