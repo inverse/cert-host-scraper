@@ -11,6 +11,7 @@ dependencies = [
     "click>=8.1.8,<9",
     "rich>=11,<15",
     "single-source>=0.4.0,<0.5",
+    "tenacity>=9.0.0,<10",
 ]
 
 [project.urls]

@@ -4,6 +4,13 @@ from dataclasses import dataclass
 
 import requests
 import urllib3
+from tenacity import (
+    before_log,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
@@ -43,6 +50,13 @@ async def async_fetch_site_information(url: str, timeout: int) -> int:
     return await asyncio.to_thread(fetch_site_information, url, timeout)
 
 
+@retry(
+    retry=retry_if_exception_type(requests.HTTPError),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=10),
+    reraise=True,
+    before=before_log(logger, logging.DEBUG),
+)
 def fetch_site(search: str) -> list[dict]:
     url = f"https://crt.sh/?q={search}&output=json"
     result = requests.get(url)
