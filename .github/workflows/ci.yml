@@ -14,7 +14,7 @@ jobs:
     env:
         MISE_IDIOMATIC_VERSION_FILE_ENABLE_TOOLS: python
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: jdx/mise-action@v3
     - name: Install pip dependencies
       run: uv sync
@@ -30,7 +30,7 @@ jobs:
       matrix:
         python-version: ['3.14', '3.13', '3.12', '3.11', '3.10']
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: jdx/mise-action@v3
     - name: Project python version
       id: project-python-version
