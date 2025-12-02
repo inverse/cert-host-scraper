@@ -81,7 +81,7 @@ class Output:
 @click.version_option(__version__, message="%(version)s")
 def cli(debug: bool):
     log_level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=log_level)
+    logging.getLogger().setLevel(log_level)
 
 
 @cli.command()
