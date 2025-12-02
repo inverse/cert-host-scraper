@@ -12,6 +12,8 @@ from tenacity import (
     wait_exponential,
 )
 
+from cert_host_scraper import __version__
+
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
 
@@ -38,6 +40,12 @@ class Result:
         return [result for result in self.scraped if result.status_code == status_code]
 
 
+def _default_headers() -> dict:
+    return {
+        "User-Agent": f"Mozilla/5.0 Cert-Host-Scraper/{__version__} (https://github.com/inverse/cert-host-scraper)"
+    }
+
+
 def fetch_site_information(url: str, timeout: int) -> int:
     try:
         return requests.get(url, timeout=timeout).status_code
@@ -59,7 +67,7 @@ async def async_fetch_site_information(url: str, timeout: int) -> int:
 )
 def fetch_site(search: str) -> list[dict]:
     url = f"https://crt.sh/?q={search}&output=json"
-    result = requests.get(url)
+    result = requests.get(url, headers=_default_headers())
     result.raise_for_status()
 
     return result.json()
@@ -80,7 +88,11 @@ def scrape_urls(results: list[dict], options: Options) -> list[str]:
 
 def fetch_urls(site: str, options: Options) -> list[str]:
     results = fetch_site(site)
-    return scrape_urls(results, options)
+    logger.debug(f"Found {len(results)} results for {site}")
+    urls = scrape_urls(results, options)
+    logger.debug(f"Found {len(urls)} URLs for {site}")
+
+    return urls
 
 
 async def validate_url(url: str, options: Options) -> UrlResult:
