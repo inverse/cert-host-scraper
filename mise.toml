@@ -1,5 +1,5 @@
 [tools]
-pre-commit = "4.5.0"
+pre-commit = "4.5.1"
 uv = "0.9.14"
 
 [hooks]
