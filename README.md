@@ -12,15 +12,9 @@ Query the certificate transparency log from [crt.sh](https://crt.sh) by a given 
 
 <img alt="Demo of cert-host-scraper" src="https://vhs.charm.sh/vhs-7fKWanXXcalG2oS28DVyZC.gif" width="800" />
 
-## Usage
-
-```bash
-cert-host-scraper search your-domain.com [--status-code 200]
-```
-
 ## Installation
 
-With pipx:
+With [pipx]:
 
 ```bash
 pipx install cert-host-scraper
@@ -32,12 +26,24 @@ With pip:
 pip install cert-host-scraper
 ```
 
+## Usage
+
+Once installed you can look up information about a domain using the `search` command:
+
+```bash
+cert-host-scraper search your-domain.com
+```
+
+There are additional options that can be provided to change this behaviour and result filtering.
+
+Pass `--help` to this command for a full list of options.
+
 ## Development
 
 Requires [uv][0] and Python 3.10+.
 
 ```bash
-uv install
+uv sync
 uv run python -m cert_host_scraper.cli
 ```
 
@@ -49,3 +55,4 @@ MIT
 
 [0]: https://github.com/astral-sh/uv
 [1]: https://github.com/jdx/mise
+[2]: https://pipx.pypa.io
