@@ -1,5 +1,3 @@
-from pathlib import Path
+from importlib.metadata import version
 
-from single_source import get_version
-
-__version__ = get_version("cert_host_scraper", Path(__file__).parent.parent)
+__version__ = version("cert-host-scraper")
