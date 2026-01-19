@@ -26,7 +26,7 @@ dev = [
     "pytest>=9,<10",
     "pytest-cov>=7.0.0,<8",
     "pytest-socket>=0.7.0,<0.8",
-    "vcrpy>=7.0.0,<8",
+    "vcrpy>=8.1.1,<9",
 ]
 
 [build-system]
