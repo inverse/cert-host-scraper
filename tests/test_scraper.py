@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 import pytest
@@ -7,29 +8,35 @@ from cert_host_scraper import scraper
 
 TIMEOUT = 2
 
+VCR_RECORD_MODE = os.getenv("VCR_RECORD_MODE", "none")
+my_vcr = vcr.VCR(
+    record_mode=VCR_RECORD_MODE,
+    cassette_library_dir="fixtures/vcr",
+)
+
 
 @pytest.mark.enable_socket
 class TestScraper(TestCase):
+    @my_vcr.use_cassette("google.com.yaml")
     def test_fetch_urls_clean_true(self):
-        with vcr.use_cassette("fixtures/vcr/google.com.yaml"):
-            results = scraper.fetch_urls(
-                "google.com", scraper.Options(timeout=2, clean=True)
-            )
-            self.assertEqual(53, len(results))
-            self.assertIn("https://www.google.com", results)
+        results = scraper.fetch_urls(
+            "google.com", scraper.Options(timeout=2, clean=True)
+        )
+        self.assertEqual(53, len(results))
+        self.assertIn("https://www.google.com", results)
 
+    @my_vcr.use_cassette("google.com.yaml")
     def test_fetch_urls_clean_false(self):
-        with vcr.use_cassette("fixtures/vcr/google.com.yaml"):
-            results = scraper.fetch_urls(
-                "google.com", scraper.Options(timeout=2, clean=False)
-            )
-            self.assertEqual(60, len(results))
-            self.assertIn("https://*.mail.google.com", results)
+        results = scraper.fetch_urls(
+            "google.com", scraper.Options(timeout=2, clean=False)
+        )
+        self.assertEqual(60, len(results))
+        self.assertIn("https://*.mail.google.com", results)
 
+    @my_vcr.use_cassette("fetch_site_information_valid.yaml")
     def test_fetch_site_information_valid(self):
-        with vcr.use_cassette("fixtures/vcr/fetch_site_information_valid.yaml"):
-            result = scraper.fetch_site_information("https://example.org", TIMEOUT)
-            self.assertEqual(200, result)
+        result = scraper.fetch_site_information("https://example.org", TIMEOUT)
+        self.assertEqual(200, result)
 
 
 class TestResults(TestCase):

@@ -4,3 +4,11 @@ uv = "0.9.26"
 
 [hooks]
 postinstall = "pre-commit install && pre-commit install --hook-type commit-msg --hook-type pre-push"
+
+[tasks.test]
+description = "Run tests"
+run = "pytest"
+
+[tasks.test-record]
+description = "Run tests with recording"
+run = "VCR_RECORD_MODE=all pytest"
