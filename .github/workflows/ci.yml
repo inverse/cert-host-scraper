@@ -44,6 +44,6 @@ jobs:
       run: uv run pytest --cov --junitxml=junit.xml -o junit_family=legacy --cov-branch --cov-report=xml
     - name: Upload coverage reports to Codecov
       if: ${{ !cancelled() && matrix.python-version == steps.project-python-version.outputs.python-version }}
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
