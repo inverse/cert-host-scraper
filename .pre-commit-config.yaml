@@ -8,12 +8,10 @@ repos:
   - id: check-toml
   - id: check-added-large-files
 - repo: https://github.com/commitizen-tools/commitizen
-  rev: v4.12.1
+  rev: v4.15.1
   hooks:
     - id: commitizen
       stages: [commit-msg]
-    - id: commitizen-branch
-      stages: [pre-push]
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: 'v0.15.12'
   hooks:
@@ -22,11 +20,11 @@ repos:
       - '--fix'
   - id: ruff-format
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.20.0
+  rev: v2.0.0
   hooks:
   - id: mypy
     additional_dependencies: [types-requests]
 - repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.408
+  rev: v1.1.409
   hooks:
   - id: pyright
