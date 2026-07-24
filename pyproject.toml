@@ -25,7 +25,7 @@ dev = [
     "pytest>=9,<10",
     "pytest-asyncio>=1.4.0",
     "pytest-cov>=7.0.0,<8",
-    "pytest-socket>=0.7.0,<0.8",
+    "pytest-socket>=0.8,<0.9",
     "vcrpy>=8.1.1,<9",
 ]
 
