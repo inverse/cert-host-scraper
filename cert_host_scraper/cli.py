@@ -21,6 +21,28 @@ from cert_host_scraper.scraper import (
 from cert_host_scraper.utils import divide_chunks, strip_url
 
 NO_STATUS_CODE_FILTER = 0
+NO_STATUS_CODE_TIMEOUT = -1
+
+
+def _render_json_output(results: list[UrlResult]) -> str:
+    return json.dumps(
+        [{"url": r.url, "status_code": r.status_code} for r in results],
+        indent=2,
+    )
+
+
+def _render_table_output(results: list[UrlResult], console: Console) -> None:
+    table = Table(show_header=True, header_style="bold", box=box.MINIMAL)
+    table.add_column("URL")
+    table.add_column("Status Code")
+    for r in results:
+        code = str(r.status_code) if r.status_code != NO_STATUS_CODE_TIMEOUT else "-"
+        url, code_display = r.url, code
+        if r.status_code == 200:
+            code_display = f"[green]{code}[/green]"
+            url = f"[green]{url}[/green]"
+        table.add_row(url, code_display)
+    console.print(table)
 
 
 def process_urls(
@@ -150,29 +172,9 @@ def search(
         display = result.scraped
 
     if display_json:
-        json_output = [
-            {"url": url_result.url, "status_code": url_result.status_code}
-            for url_result in display
-        ]
-        click.echo(json.dumps(json_output, indent=2))
+        click.echo(_render_json_output(display))
     else:
-        table = Table(show_header=True, header_style="bold", box=box.MINIMAL)
-        table.add_column("URL")
-        table.add_column("Status Code")
-        for url_result in display:
-            display_code = str(url_result.status_code)
-            if url_result.status_code == -1:
-                display_code = "-"
-
-            url = url_result.url
-            if url_result.status_code == 200:
-                display_code = f"[green]{display_code}[/green]"
-                url = f"[green]{url}[/green]"
-
-            table.add_row(url, display_code)
-
-        console = Console()
-        console.print(table)
+        _render_table_output(display, Console())
 
 
 if __name__ == "__main__":
