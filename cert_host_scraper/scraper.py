@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import requests
@@ -99,3 +100,52 @@ def fetch_urls(site: str, options: Options) -> list[str]:
 
 async def validate_url(url: str, options: Options) -> UrlResult:
     return UrlResult(url, await async_fetch_site_information(url, options.timeout))
+
+
+async def _process_urls(
+    urls: list[str],
+    options: Options,
+    batch_size: int,
+    *,
+    on_progress: Callable[[], object] | None = None,
+) -> list[UrlResult]:
+    sem = asyncio.Semaphore(batch_size)
+
+    async def fetch(url: str) -> UrlResult:
+        async with sem:
+            result = await validate_url(url, options)
+            if on_progress:
+                on_progress()
+            return result
+
+    return await asyncio.gather(*[fetch(u) for u in urls])
+
+
+def process_urls(
+    urls: list[str],
+    options: Options,
+    batch_size: int,
+    *,
+    on_progress: Callable[[], object] | None = None,
+) -> list[UrlResult]:
+    """
+    Process a list of URLs concurrently and return the results.
+    """
+    return asyncio.run(
+        _process_urls(urls, options, batch_size, on_progress=on_progress)
+    )
+
+
+def search_urls(
+    search_term: str,
+    options: Options,
+    batch_size: int = 20,
+    *,
+    on_progress: Callable[[], object] | None = None,
+) -> Result:
+    """
+    Fetch certificate log URLs and scrape their status codes.
+    """
+    urls = fetch_urls(search_term, options)
+    scraped = process_urls(urls, options, batch_size, on_progress=on_progress)
+    return Result(scraped)
