@@ -18,7 +18,7 @@ from cert_host_scraper.scraper import (
     fetch_urls,
     validate_url,
 )
-from cert_host_scraper.utils import divide_chunks, strip_url
+from cert_host_scraper.utils import strip_url
 
 NO_STATUS_CODE_FILTER = 0
 NO_STATUS_CODE_TIMEOUT = -1
@@ -45,33 +45,29 @@ def _render_table_output(results: list[UrlResult], console: Console) -> None:
     console.print(table)
 
 
+async def _process_urls(
+    urls: list[str], options: Options, batch_size: int, show_progress: bool
+) -> list[UrlResult]:
+    sem = asyncio.Semaphore(batch_size)
+    progress = iter(track(range(len(urls)), "Checking URLs")) if show_progress else None
+
+    async def fetch(url: str) -> UrlResult:
+        async with sem:
+            result = await validate_url(url, options)
+            if progress:
+                next(progress)
+            return result
+
+    return await asyncio.gather(*[fetch(u) for u in urls])
+
+
 def process_urls(
     urls: list[str], options: Options, batch_size: int, show_progress: bool
 ) -> list[UrlResult]:
     """
     Process a list of URLs concurrently and return the results.
     """
-    results = []
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-    chunks = list(divide_chunks(urls, batch_size))
-
-    progress_iterable = range(len(chunks))
-    if show_progress:
-        progress_iterable = track(progress_iterable, "Checking URLs")
-
-    for chunk_index in progress_iterable:
-        chunk = chunks[chunk_index]
-        chunk_result = loop.run_until_complete(
-            asyncio.gather(*[validate_url(url, options) for url in chunk])
-        )
-        results.extend(chunk_result)
-
-    return results
+    return asyncio.run(_process_urls(urls, options, batch_size, show_progress))
 
 
 def validate_status_code(
