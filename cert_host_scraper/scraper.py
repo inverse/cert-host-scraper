@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import logging
 from collections.abc import Callable
@@ -37,8 +39,10 @@ class UrlResult:
 class Result:
     scraped: list[UrlResult]
 
-    def filter_by_status_code(self, status_code: int) -> list[UrlResult]:
-        return [result for result in self.scraped if result.status_code == status_code]
+    def filter_by_status_code(self, status_code: int) -> Result:
+        return Result(
+            [result for result in self.scraped if result.status_code == status_code]
+        )
 
 
 def _default_headers() -> dict:
@@ -127,13 +131,14 @@ def process_urls(
     batch_size: int,
     *,
     on_progress: Callable[[], object] | None = None,
-) -> list[UrlResult]:
+) -> Result:
     """
     Process a list of URLs concurrently and return the results.
     """
-    return asyncio.run(
+    scraped = asyncio.run(
         _process_urls(urls, options, batch_size, on_progress=on_progress)
     )
+    return Result(scraped)
 
 
 def search_urls(
@@ -147,5 +152,4 @@ def search_urls(
     Fetch certificate log URLs and scrape their status codes.
     """
     urls = fetch_urls(search_term, options)
-    scraped = process_urls(urls, options, batch_size, on_progress=on_progress)
-    return Result(scraped)
+    return process_urls(urls, options, batch_size, on_progress=on_progress)

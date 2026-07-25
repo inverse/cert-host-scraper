@@ -7,7 +7,7 @@ from requests import RequestException
 
 from cert_host_scraper import __version__
 from cert_host_scraper.cli import cli, search
-from cert_host_scraper.scraper import UrlResult
+from cert_host_scraper.scraper import Result, UrlResult
 
 
 class TestVersion(TestCase):
@@ -64,11 +64,13 @@ class TestSearchSuccess(TestCase):
         ]
         mock_fetch_urls.return_value = urls
 
-        mock_process_urls.return_value = [
-            UrlResult("https://example-200.com", 200),
-            UrlResult("https://example-404.com", 404),
-            UrlResult("https://example-error.com", -1),
-        ]
+        mock_process_urls.return_value = Result(
+            [
+                UrlResult("https://example-200.com", 200),
+                UrlResult("https://example-404.com", 404),
+                UrlResult("https://example-error.com", -1),
+            ]
+        )
 
         result = runner.invoke(search, ["example.com", "--output", "table"])
 
@@ -93,10 +95,12 @@ class TestSearchSuccess(TestCase):
         urls = ["https://example-200.com", "https://example-404.com"]
         mock_fetch_urls.return_value = urls
 
-        mock_process_urls.return_value = [
-            UrlResult("https://example-200.com", 200),
-            UrlResult("https://example-404.com", 404),
-        ]
+        mock_process_urls.return_value = Result(
+            [
+                UrlResult("https://example-200.com", 200),
+                UrlResult("https://example-404.com", 404),
+            ]
+        )
 
         result = runner.invoke(search, ["example.com", "--output", "json"])
 
@@ -121,11 +125,13 @@ class TestSearchSuccess(TestCase):
         ]
         mock_fetch_urls.return_value = urls
 
-        mock_process_urls.return_value = [
-            UrlResult("https://example-200.com", 200),
-            UrlResult("https://example-404.com", 404),
-            UrlResult("https://example-error.com", -1),
-        ]
+        mock_process_urls.return_value = Result(
+            [
+                UrlResult("https://example-200.com", 200),
+                UrlResult("https://example-404.com", 404),
+                UrlResult("https://example-error.com", -1),
+            ]
+        )
 
         result = runner.invoke(
             search, ["example.com", "--status-code", "200", "--output", "json"]

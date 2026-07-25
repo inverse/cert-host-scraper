@@ -6,13 +6,12 @@ import click
 from requests import RequestException
 from rich import box
 from rich.console import Console
-from rich.progress import track
+from rich.progress import Progress
 from rich.table import Table
 
 from cert_host_scraper import __version__
 from cert_host_scraper.scraper import (
     Options,
-    Result,
     UrlResult,
     fetch_urls,
     process_urls,
@@ -21,6 +20,8 @@ from cert_host_scraper.utils import strip_url
 
 NO_STATUS_CODE_FILTER = 0
 NO_STATUS_CODE_TIMEOUT = -1
+
+console = Console()
 
 
 def _render_json_output(results: list[UrlResult]) -> str:
@@ -69,7 +70,7 @@ class Output:
 
 
 RENDERERS = {
-    Output.TABLE: lambda results: _render_table_output(results, Console()),
+    Output.TABLE: lambda results: _render_table_output(results, console),
     Output.JSON: lambda results: click.echo(_render_json_output(results)),
 }
 
@@ -138,21 +139,29 @@ def search(
     if show_progress:
         click.echo(f"Found {len(urls)} URLs for {search}")
 
-    progress_iter = (
-        iter(track(range(len(urls)), "Checking URLs")) if show_progress else None
-    )
-    scraped_results = process_urls(
-        urls,
-        options,
-        batch_size,
-        on_progress=lambda: (
-            None if progress_iter is None else next(progress_iter) and None
-        ),
-    )
+    if show_progress:
+        pbar = Progress(console=console, transient=True)
+        task_id = pbar.add_task("Checking URLs", total=len(urls))
+        pbar.start()
 
-    result = Result(scraped_results)
+        try:
+            result = process_urls(
+                urls,
+                options,
+                batch_size,
+                on_progress=lambda: pbar.update(task_id, advance=1),
+            )
+        finally:
+            pbar.stop()
+    else:
+        result = process_urls(
+            urls,
+            options,
+            batch_size,
+        )
+
     if status_code != NO_STATUS_CODE_FILTER:
-        display = result.filter_by_status_code(status_code)
+        display = result.filter_by_status_code(status_code).scraped
     else:
         display = result.scraped
 
