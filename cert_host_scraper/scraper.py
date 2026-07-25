@@ -59,7 +59,9 @@ async def async_fetch_site_information(url: str, timeout: int) -> int:
 
 
 @retry(
-    retry=retry_if_exception_type(requests.HTTPError),
+    retry=retry_if_exception_type(
+        (requests.RequestException, urllib3.exceptions.HTTPError)
+    ),
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=1, max=10),
     reraise=True,
