@@ -7,8 +7,8 @@ from click.testing import CliRunner
 from requests import RequestException
 
 from cert_host_scraper import __version__
-from cert_host_scraper.cli import cli, process_urls, search
-from cert_host_scraper.scraper import Options, UrlResult
+from cert_host_scraper.cli import cli, search
+from cert_host_scraper.scraper import Options, UrlResult, process_urls
 
 
 class TestVersion(TestCase):
@@ -140,19 +140,18 @@ class TestSearchSuccess(TestCase):
         self.assertCountEqual(output_json, expected_json)
 
     @pytest.mark.asyncio
-    @patch("cert_host_scraper.cli.validate_url", new_callable=AsyncMock)
+    @patch("cert_host_scraper.scraper.validate_url", new_callable=AsyncMock)
     def test_process_urls(self, mock_validate_url: AsyncMock):
         urls = ["http://example.com", "http://test.com"]
         options = Options(timeout=2, clean=True)
         batch_size = 1
-        show_progress = False
 
         mock_validate_url.side_effect = [
             UrlResult(url="http://example.com", status_code=200),
             UrlResult(url="http://test.com", status_code=404),
         ]
 
-        results = process_urls(urls, options, batch_size, show_progress)
+        results = process_urls(urls, options, batch_size)
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0].url, "http://example.com")
         self.assertEqual(results[0].status_code, 200)
