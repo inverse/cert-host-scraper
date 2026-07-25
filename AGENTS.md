@@ -55,4 +55,4 @@ Common types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `ci`, `style`.
 
 You can stage and commit as usual -- commitizen validates the message automatically at commit time.
 
-Use `gh` cli for creating the PR.
+Use `gh` CLI for creating the PR — it will pre-fill the body from `.github/PULL_REQUEST_TEMPLATE.md`.
