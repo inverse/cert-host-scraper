@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 import sys
@@ -6,7 +8,7 @@ import click
 from requests import RequestException
 from rich import box
 from rich.console import Console
-from rich.progress import track
+from rich.progress import Progress
 from rich.table import Table
 
 from cert_host_scraper import __version__
@@ -138,17 +140,21 @@ def search(
     if show_progress:
         click.echo(f"Found {len(urls)} URLs for {search}")
 
-    progress_iter = (
-        iter(track(range(len(urls)), "Checking URLs")) if show_progress else None
-    )
-    scraped_results = process_urls(
-        urls,
-        options,
-        batch_size,
-        on_progress=lambda: (
-            None if progress_iter is None else next(progress_iter) and None
-        ),
-    )
+    if show_progress:
+        progress = Progress()
+        task_id = progress.add_task("Checking URLs", total=len(urls))
+        progress.__enter__()
+        try:
+            scraped_results = process_urls(
+                urls,
+                options,
+                batch_size,
+                on_progress=lambda: progress.advance(task_id),
+            )
+        finally:
+            progress.__exit__(None, None, None)
+    else:
+        scraped_results = process_urls(urls, options, batch_size)
 
     result = Result(scraped_results)
     if status_code != NO_STATUS_CODE_FILTER:
