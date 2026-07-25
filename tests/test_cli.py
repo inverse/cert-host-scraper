@@ -137,3 +137,14 @@ class TestSearchSuccess(TestCase):
         ]
         output_json = json.loads(result.output)
         self.assertCountEqual(output_json, expected_json)
+
+
+class TestCliGroup(TestCase):
+    """Cover the cli() group callback path via --debug."""
+
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_cli_with_debug(self, mock_fetch_urls: Mock):
+        mock_fetch_urls.return_value = []
+        runner = CliRunner()
+        result = runner.invoke(cli, ["--debug", "search", "example.com"])
+        self.assertEqual(result.exit_code, 0)
