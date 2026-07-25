@@ -134,18 +134,3 @@ def process_urls(
     return asyncio.run(
         _process_urls(urls, options, batch_size, on_progress=on_progress)
     )
-
-
-def search_urls(
-    search_term: str,
-    options: Options,
-    batch_size: int = 20,
-    *,
-    on_progress: Callable[[], object] | None = None,
-) -> Result:
-    """
-    Fetch certificate log URLs and scrape their status codes.
-    """
-    urls = fetch_urls(search_term, options)
-    scraped = process_urls(urls, options, batch_size, on_progress=on_progress)
-    return Result(scraped)

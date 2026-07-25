@@ -113,50 +113,6 @@ class TestProcessUrls(TestCase):
         self.assertEqual(progress.call_count, 2)
 
 
-class TestSearchUrls(TestCase):
-    @patch("cert_host_scraper.scraper.process_urls")
-    @patch("cert_host_scraper.scraper.fetch_urls")
-    def test_search_urls(self, mock_fetch_urls, mock_process_urls):
-        mock_fetch_urls.return_value = [
-            "https://example.com",
-            "https://test.com",
-        ]
-        mock_process_urls.return_value = [
-            scraper.UrlResult("https://example.com", 200),
-            scraper.UrlResult("https://test.com", 404),
-        ]
-
-        options = scraper.Options(timeout=2, clean=True)
-        result = scraper.search_urls("example.com", options)
-
-        self.assertIsInstance(result, scraper.Result)
-        self.assertEqual(len(result.scraped), 2)
-        mock_fetch_urls.assert_called_once_with("example.com", options)
-        mock_process_urls.assert_called_once_with(
-            ["https://example.com", "https://test.com"],
-            options,
-            20,
-            on_progress=None,
-        )
-
-    @patch("cert_host_scraper.scraper.process_urls")
-    @patch("cert_host_scraper.scraper.fetch_urls")
-    def test_search_urls_with_progress(self, mock_fetch_urls, mock_process_urls):
-        mock_fetch_urls.return_value = ["https://example.com"]
-        mock_process_urls.return_value = [
-            scraper.UrlResult("https://example.com", 200),
-        ]
-
-        options = scraper.Options(timeout=2, clean=True)
-        progress = Mock()
-        result = scraper.search_urls("example.com", options, on_progress=progress)
-
-        self.assertIsInstance(result, scraper.Result)
-        mock_process_urls.assert_called_once_with(
-            ["https://example.com"], options, 20, on_progress=progress
-        )
-
-
 class TestResults(TestCase):
     def test_filter_by_status_code(self):
         results = scraper.Result(
