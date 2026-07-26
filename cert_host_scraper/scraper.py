@@ -114,9 +114,9 @@ async def _process_urls(
     async def fetch(url: str) -> UrlResult:
         async with sem:
             result = await validate_url(url, options)
-            if on_progress:
-                on_progress()
-            return result
+        if on_progress:
+            on_progress()
+        return result
 
     return await asyncio.gather(*[fetch(u) for u in urls])
 

@@ -141,18 +141,14 @@ def search(
         click.echo(f"Found {len(urls)} URLs for {search}")
 
     if show_progress:
-        progress = Progress()
-        task_id = progress.add_task("Checking URLs", total=len(urls))
-        progress.__enter__()
-        try:
+        with Progress() as progress:
+            task_id = progress.add_task("Checking URLs", total=len(urls))
             scraped_results = process_urls(
                 urls,
                 options,
                 batch_size,
                 on_progress=lambda: progress.advance(task_id),
             )
-        finally:
-            progress.__exit__(None, None, None)
     else:
         scraped_results = process_urls(urls, options, batch_size)
 
