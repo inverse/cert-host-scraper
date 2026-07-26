@@ -7,8 +7,12 @@ postinstall = "pre-commit install && pre-commit install --hook-type commit-msg -
 
 [tasks.test]
 description = "Run tests"
-run = "pytest"
+run = "uv run pytest"
 
 [tasks.test-record]
 description = "Run tests with recording"
-run = "VCR_RECORD_MODE=all pytest"
+run = "VCR_RECORD_MODE=all uv run pytest"
+
+[tasks.clean]
+description = "Remove tool and test cache files"
+run = "find . -maxdepth 3 \\( -name '__pycache__' -o -name '.pytest_cache' -o -name '.ruff_cache' -o -name '.mypy_cache' \\) -exec rm -rf {} + && rm -f .coverage"
