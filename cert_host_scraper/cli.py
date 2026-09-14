@@ -107,7 +107,7 @@ def cli(debug: bool):
     default=20,
 )
 @click.option(
-    "--output", type=click.Choice(Output.values()), required=True, default="table"
+    "--output", type=click.Choice(Output.values()), required=False, default="table"
 )
 def search(
     search: str,
