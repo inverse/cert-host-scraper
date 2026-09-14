@@ -27,7 +27,14 @@ NO_STATUS_CODE_TIMEOUT = -1
 
 def _render_json_output(results: list[UrlResult]) -> str:
     return json.dumps(
-        [{"url": r.url, "status_code": r.status_code} for r in results],
+        [
+            {
+                "url": r.url,
+                "status_code": r.status_code,
+                "probe_error": r.probe_error.value if r.probe_error else None,
+            }
+            for r in results
+        ],
         indent=2,
     )
 
@@ -42,6 +49,8 @@ def _render_table_output(results: list[UrlResult], console: Console) -> None:
         if r.status_code == 200:
             code_display = f"[green]{code}[/green]"
             url = f"[green]{url}[/green]"
+        elif r.probe_error is not None:
+            code_display = f"[red]{r.probe_error.value}[/red]"
         table.add_row(url, code_display)
     console.print(table)
 

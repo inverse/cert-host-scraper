@@ -14,6 +14,7 @@ from tenacity import (
 )
 
 from cert_host_scraper import __version__
+from cert_host_scraper.prober_error import ProbeStatus, probe_status
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
@@ -34,6 +35,7 @@ class Options:
 class UrlResult:
     url: str
     status_code: int
+    probe_error: ProbeStatus | None = None
 
 
 @dataclass
@@ -50,16 +52,24 @@ def _default_headers() -> dict:
     }
 
 
-def fetch_site_information(url: str, timeout: int) -> int:
+def fetch_site_information(url: str, timeout: int) -> tuple[int, ProbeStatus | None]:
+    """Fetch the HTTP status code, or classify the transport failure."""
     try:
-        return requests.head(url, timeout=timeout).status_code
+        return requests.head(url, timeout=timeout).status_code, None
     except requests.RequestException as e:
         logger.debug(e)
-        return -1
+        return -1, probe_status(e)
 
 
-async def async_fetch_site_information(url: str, timeout: int) -> int:
+async def async_fetch_site_information(
+    url: str, timeout: int
+) -> tuple[int, ProbeStatus | None]:
     return await asyncio.to_thread(fetch_site_information, url, timeout)
+
+
+async def validate_url(url: str, options: Options) -> UrlResult:
+    status_code, probe_error = await async_fetch_site_information(url, options.timeout)
+    return UrlResult(url, status_code, probe_error)
 
 
 @retry(
@@ -99,10 +109,6 @@ def fetch_urls(site: str, options: Options) -> list[str]:
     logger.debug(f"Found {len(urls)} URLs for {site}")
 
     return urls
-
-
-async def validate_url(url: str, options: Options) -> UrlResult:
-    return UrlResult(url, await async_fetch_site_information(url, options.timeout))
 
 
 async def _process_urls(

@@ -8,14 +8,15 @@ import requests
 import vcr
 
 from cert_host_scraper import scraper
-
-TIMEOUT = 2
+from cert_host_scraper.prober_error import ProbeStatus
 
 VCR_RECORD_MODE = os.getenv("VCR_RECORD_MODE", "none")
 my_vcr = vcr.VCR(
     record_mode=VCR_RECORD_MODE,
     cassette_library_dir="fixtures/vcr",
 )
+
+TIMEOUT = 2
 
 
 @pytest.mark.enable_socket
@@ -38,16 +39,21 @@ class TestScraper(TestCase):
 
     @my_vcr.use_cassette("fetch_site_information_valid.yaml")
     def test_fetch_site_information_valid(self):
-        result = scraper.fetch_site_information("https://example.org", TIMEOUT)
-        self.assertEqual(200, result)
+        status_code, probe_error = scraper.fetch_site_information(
+            "https://example.org", TIMEOUT
+        )
+        self.assertEqual(200, status_code)
+        self.assertIsNone(probe_error)
 
 
 class TestFetchSiteInformation(TestCase):
     @patch("cert_host_scraper.scraper.requests.head")
     def test_fetch_site_information_error(self, mock_head):
         mock_head.side_effect = requests.RequestException("connection error")
-        result = scraper.fetch_site_information("https://example.com", TIMEOUT)
-        self.assertEqual(-1, result)
+        _status_code, probe_error = scraper.fetch_site_information(
+            "https://example.com", TIMEOUT
+        )
+        self.assertEqual(ProbeStatus.OTHER, probe_error)
 
 
 class TestFetchSite(TestCase):
@@ -68,7 +74,7 @@ class TestValidateUrl(TestCase):
     @patch("cert_host_scraper.scraper.fetch_site_information")
     def test_validate_url(self, mock_fetch):
         """Exercises validate_url and async_fetch_site_information."""
-        mock_fetch.return_value = 200
+        mock_fetch.return_value = (200, None)
 
         async def run():
             return await scraper.validate_url(
@@ -81,6 +87,7 @@ class TestValidateUrl(TestCase):
             result = loop.run_until_complete(run())
             self.assertEqual(result.url, "https://example.com")
             self.assertEqual(result.status_code, 200)
+            self.assertIsNone(result.probe_error)
             mock_fetch.assert_called_once_with("https://example.com", 2)
         finally:
             loop.close()
@@ -88,7 +95,7 @@ class TestValidateUrl(TestCase):
     @patch("cert_host_scraper.scraper.fetch_site_information")
     def test_validate_url_error(self, mock_fetch):
         """Exercises validate_url when fetch_site_information returns an error code."""
-        mock_fetch.return_value = -1
+        mock_fetch.return_value = (-1, ProbeStatus.OTHER)
 
         async def run():
             return await scraper.validate_url(
@@ -101,6 +108,7 @@ class TestValidateUrl(TestCase):
             result = loop.run_until_complete(run())
             self.assertEqual(result.url, "https://invalid.example.com")
             self.assertEqual(result.status_code, -1)
+            self.assertEqual(result.probe_error, ProbeStatus.OTHER)
         finally:
             loop.close()
 
