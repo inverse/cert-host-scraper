@@ -47,7 +47,20 @@ uv sync
 uv run python -m cert_host_scraper.cli
 ```
 
-All dev tooling is managed [mise][1] as defined in the provided `mise.toml` and `.python-version` files.
+### Testing
+
+Run the test suite:
+
+```bash
+mise run test
+```
+
+Run with a new fixture, first remove the old; than run with record mode:
+
+```bash
+rm fixtures/vcr/fetch_site_information_valid.yaml
+mise run test:record
+```
 
 ## License
 
@@ -56,3 +69,4 @@ MIT
 [0]: https://github.com/astral-sh/uv
 [1]: https://github.com/jdx/mise
 [2]: https://pipx.pypa.io
+[vcrpy]: https://vcrpy.readthedocs.io

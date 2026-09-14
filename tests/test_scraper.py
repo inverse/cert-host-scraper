@@ -50,6 +50,20 @@ class TestFetchSiteInformation(TestCase):
         self.assertEqual(-1, result)
 
 
+class TestFetchSite(TestCase):
+    @patch("cert_host_scraper.scraper.requests.get")
+    def test_fetch_site_timeout(self, mock_get):
+        mock_get.return_value.json.return_value = []
+        result = scraper.fetch_site("example.com")
+        self.assertEqual([], result)
+        expected_url = "https://crt.sh/?q=example.com&output=json"
+        mock_get.assert_called_once_with(
+            expected_url,
+            headers=scraper._default_headers(),
+            timeout=scraper.CRTSH_TIMEOUT,
+        )
+
+
 class TestValidateUrl(TestCase):
     @patch("cert_host_scraper.scraper.fetch_site_information")
     def test_validate_url(self, mock_fetch):

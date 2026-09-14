@@ -9,7 +9,7 @@ postinstall = "pre-commit install && pre-commit install --hook-type commit-msg -
 description = "Run tests"
 run = "uv run pytest"
 
-[tasks.test-record]
+[tasks."test:record"]
 description = "Run tests with recording"
 run = "VCR_RECORD_MODE=all uv run pytest"
 
