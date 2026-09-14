@@ -43,11 +43,25 @@ class TestScraper(TestCase):
 
 
 class TestFetchSiteInformation(TestCase):
-    @patch("cert_host_scraper.scraper.requests.get")
-    def test_fetch_site_information_error(self, mock_get):
-        mock_get.side_effect = requests.RequestException("connection error")
+    @patch("cert_host_scraper.scraper.requests.head")
+    def test_fetch_site_information_error(self, mock_head):
+        mock_head.side_effect = requests.RequestException("connection error")
         result = scraper.fetch_site_information("https://example.com", TIMEOUT)
         self.assertEqual(-1, result)
+
+
+class TestFetchSite(TestCase):
+    @patch("cert_host_scraper.scraper.requests.get")
+    def test_fetch_site_timeout(self, mock_get):
+        mock_get.return_value.json.return_value = []
+        result = scraper.fetch_site("example.com")
+        self.assertEqual([], result)
+        expected_url = "https://crt.sh/?q=example.com&output=json"
+        mock_get.assert_called_once_with(
+            expected_url,
+            headers=scraper._default_headers(),
+            timeout=scraper.CRTSH_TIMEOUT,
+        )
 
 
 class TestValidateUrl(TestCase):

@@ -20,6 +20,9 @@ logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 urllib3.disable_warnings()
 
+# Conservative and tunable: covers p95 crt.sh latency without hanging forever.
+CRTSH_TIMEOUT = 30
+
 
 @dataclass
 class Options:
@@ -49,7 +52,7 @@ def _default_headers() -> dict:
 
 def fetch_site_information(url: str, timeout: int) -> int:
     try:
-        return requests.get(url, timeout=timeout).status_code
+        return requests.head(url, timeout=timeout).status_code
     except requests.RequestException as e:
         logger.debug(e)
         return -1
@@ -70,7 +73,7 @@ async def async_fetch_site_information(url: str, timeout: int) -> int:
 )
 def fetch_site(search: str) -> list[dict]:
     url = f"https://crt.sh/?q={search}&output=json"
-    result = requests.get(url, headers=_default_headers())
+    result = requests.get(url, headers=_default_headers(), timeout=CRTSH_TIMEOUT)
     result.raise_for_status()
 
     return result.json()
