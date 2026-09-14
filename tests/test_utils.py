@@ -16,3 +16,9 @@ class TestStripUrl(TestCase):
     def test_strip_path(self):
         self.assertEqual("example.com", strip_url("example.com/"))
         self.assertEqual("example.com", strip_url("example.com/hello"))
+
+    def test_keeps_www2_subdomain(self):
+        self.assertEqual("www2.example.com", strip_url("https://www2.example.com"))
+
+    def test_case_insensitive_scheme_and_www(self):
+        self.assertEqual("Example.COM", strip_url("HTTPS://WWW.Example.COM/Path?q=1"))
