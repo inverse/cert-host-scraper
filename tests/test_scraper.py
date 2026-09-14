@@ -43,9 +43,9 @@ class TestScraper(TestCase):
 
 
 class TestFetchSiteInformation(TestCase):
-    @patch("cert_host_scraper.scraper.requests.get")
-    def test_fetch_site_information_error(self, mock_get):
-        mock_get.side_effect = requests.RequestException("connection error")
+    @patch("cert_host_scraper.scraper.requests.head")
+    def test_fetch_site_information_error(self, mock_head):
+        mock_head.side_effect = requests.RequestException("connection error")
         result = scraper.fetch_site_information("https://example.com", TIMEOUT)
         self.assertEqual(-1, result)
 

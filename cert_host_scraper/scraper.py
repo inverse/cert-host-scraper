@@ -49,7 +49,7 @@ def _default_headers() -> dict:
 
 def fetch_site_information(url: str, timeout: int) -> int:
     try:
-        return requests.get(url, timeout=timeout).status_code
+        return requests.head(url, timeout=timeout).status_code
     except requests.RequestException as e:
         logger.debug(e)
         return -1
