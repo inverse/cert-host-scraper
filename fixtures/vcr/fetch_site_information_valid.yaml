@@ -5,39 +5,123 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, zstd
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.33.1
     method: HEAD
     uri: https://example.org/
   response:
     body:
       string: ''
     headers:
-      Accept-Ranges:
-      - bytes
       Age:
-      - '327361'
+      - '1277'
+      CF-RAY:
+      - a3b1c93b1fe5c3bb-WAW
       Cache-Control:
-      - max-age=604800
+      - max-age=14400
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
       Content-Type:
-      - text/html; charset=UTF-8
+      - text/html
       Date:
-      - Sat, 11 Nov 2023 21:14:24 GMT
-      Etag:
-      - '"3147526947"'
-      Expires:
-      - Sat, 18 Nov 2023 21:14:24 GMT
-      Last-Modified:
-      - Thu, 17 Oct 2019 07:18:26 GMT
+      - Mon, 14 Sep 2026 19:26:55 GMT
       Server:
-      - ECS (dcb/7EA3)
-      Vary:
-      - Accept-Encoding
-      X-Cache:
+      - cloudflare
+      allow:
+      - GET, HEAD
+      cf-cache-status:
       - HIT
+      last-modified:
+      - Mon, 14 Sep 2026 18:00:02 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, zstd
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.33.1
+    method: HEAD
+    uri: https://example.org/
+  response:
+    body:
+      string: ''
+    headers:
+      Age:
+      - '1370'
+      CF-RAY:
+      - a3b1cb84387fad22-WAW
+      Cache-Control:
+      - max-age=14400
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - text/html
+      Date:
+      - Mon, 14 Sep 2026 19:28:28 GMT
+      Server:
+      - cloudflare
+      allow:
+      - GET, HEAD
+      cf-cache-status:
+      - HIT
+      last-modified:
+      - Mon, 14 Sep 2026 18:00:02 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, zstd
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.33.1
+    method: HEAD
+    uri: https://example.org/
+  response:
+    body:
+      string: ''
+    headers:
+      Age:
+      - '1385'
+      CF-RAY:
+      - a3b1cbe1a80a7311-WAW
+      Cache-Control:
+      - max-age=14400
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - text/html
+      Date:
+      - Mon, 14 Sep 2026 19:28:43 GMT
+      Server:
+      - cloudflare
+      allow:
+      - GET, HEAD
+      cf-cache-status:
+      - HIT
+      last-modified:
+      - Mon, 14 Sep 2026 18:00:02 GMT
     status:
       code: 200
       message: OK
