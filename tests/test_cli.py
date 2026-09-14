@@ -7,6 +7,7 @@ from requests import RequestException
 
 from cert_host_scraper import __version__
 from cert_host_scraper.cli import cli, search
+from cert_host_scraper.prober_error import ProbeStatus
 from cert_host_scraper.scraper import UrlResult
 
 
@@ -83,8 +84,23 @@ class TestSearchSuccess(TestCase):
         self.assertIn("200", output)
         self.assertIn("https://example-404.com", output)
         self.assertIn("404", output)
-        self.assertIn("https://example-error.com", output)
-        self.assertIn("-", output)
+
+    @patch("cert_host_scraper.cli.process_urls")
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_search_table_output_probe_error(
+        self, mock_fetch_urls: Mock, mock_process_urls: Mock
+    ):
+        runner = CliRunner()
+        mock_fetch_urls.return_value = ["https://example-error.com"]
+        mock_process_urls.return_value = [
+            UrlResult("https://example-error.com", -1, ProbeStatus.DNS_ERROR),
+        ]
+
+        result = runner.invoke(search, ["example.com", "--output", "table"])
+
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn("https://example-error.com", result.output)
+        self.assertIn(ProbeStatus.DNS_ERROR.value, result.output)
 
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
@@ -102,8 +118,16 @@ class TestSearchSuccess(TestCase):
 
         self.assertEqual(result.exit_code, 0)
         expected_json = [
-            {"url": "https://example-200.com", "status_code": 200},
-            {"url": "https://example-404.com", "status_code": 404},
+            {
+                "url": "https://example-200.com",
+                "status_code": 200,
+                "probe_error": None,
+            },
+            {
+                "url": "https://example-404.com",
+                "status_code": 404,
+                "probe_error": None,
+            },
         ]
         output_json = json.loads(result.output)
         self.assertCountEqual(output_json, expected_json)
@@ -133,7 +157,11 @@ class TestSearchSuccess(TestCase):
 
         self.assertEqual(result.exit_code, 0)
         expected_json = [
-            {"url": "https://example-200.com", "status_code": 200},
+            {
+                "url": "https://example-200.com",
+                "status_code": 200,
+                "probe_error": None,
+            },
         ]
         output_json = json.loads(result.output)
         self.assertCountEqual(output_json, expected_json)
