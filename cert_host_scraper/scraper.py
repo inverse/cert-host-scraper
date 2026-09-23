@@ -42,8 +42,10 @@ class UrlResult:
 class Result:
     scraped: list[UrlResult]
 
-    def filter_by_status_code(self, status_code: int) -> list[UrlResult]:
-        return [result for result in self.scraped if result.status_code == status_code]
+    def filter_by_status(self, value: int | ProbeStatus) -> list[UrlResult]:
+        if isinstance(value, ProbeStatus):
+            return [result for result in self.scraped if result.probe_error == value]
+        return [result for result in self.scraped if result.status_code == value]
 
 
 def _default_headers() -> dict:

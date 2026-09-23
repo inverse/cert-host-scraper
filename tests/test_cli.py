@@ -32,20 +32,32 @@ class TestSearch(TestCase):
         result = runner.invoke(search, ["example.com"])
         self.assertEqual(result.exit_code, 1)
 
-    def test_search_status_code_wrong(self):
+    def test_search_result_wrong(self):
         runner = CliRunner()
-        result = runner.invoke(search, ["example.com", "--status-code", "xyz"])
+        result = runner.invoke(search, ["example.com", "--result", "xyz"])
         self.assertEqual(result.exit_code, 2)
 
-    def test_search_lower_invalid_status_code(self):
+    def test_search_lower_invalid_result(self):
         runner = CliRunner()
-        result = runner.invoke(search, ["example.com", "--status-code", "99"])
+        result = runner.invoke(search, ["example.com", "--result", "99"])
         self.assertEqual(result.exit_code, 2)
 
-    def test_search_upper_invalid_status_code(self):
+    def test_search_upper_invalid_result(self):
         runner = CliRunner()
-        result = runner.invoke(search, ["example.com", "--status-code", "600"])
+        result = runner.invoke(search, ["example.com", "--result", "600"])
         self.assertEqual(result.exit_code, 2)
+
+    def test_search_result_keyword_unknown(self):
+        runner = CliRunner()
+        result = runner.invoke(search, ["example.com", "--result", "frobnicate"])
+        self.assertEqual(result.exit_code, 2)
+
+    def test_search_result_uppercase_keyword(self):
+        """Uppercase 'TIMEOUT' is accepted case-insensitively, so invocation
+        proceeds to scraping (fails only because tests block sockets)."""
+        runner = CliRunner()
+        result = runner.invoke(search, ["example.com", "--result", "TIMEOUT"])
+        self.assertEqual(result.exit_code, 1)
 
     def test_invalid_output(self):
         runner = CliRunner()
@@ -79,7 +91,7 @@ class TestSearchSuccess(TestCase):
         self.assertIn("Searching for example.com", output)
         self.assertIn(f"Found {len(urls)} URLs for example.com", output)
         self.assertIn("URL", output)
-        self.assertIn("Status Code", output)
+        self.assertIn("Result", output)
         self.assertIn("https://example-200.com", output)
         self.assertIn("200", output)
         self.assertIn("https://example-404.com", output)
@@ -134,9 +146,7 @@ class TestSearchSuccess(TestCase):
 
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
-    def test_search_status_code_200(
-        self, mock_fetch_urls: Mock, mock_process_urls: Mock
-    ):
+    def test_search_result_200(self, mock_fetch_urls: Mock, mock_process_urls: Mock):
         runner = CliRunner()
         urls = [
             "https://example-200.com",
@@ -152,7 +162,7 @@ class TestSearchSuccess(TestCase):
         ]
 
         result = runner.invoke(
-            search, ["example.com", "--status-code", "200", "--output", "json"]
+            search, ["example.com", "--result", "200", "--output", "json"]
         )
 
         self.assertEqual(result.exit_code, 0)
@@ -165,6 +175,31 @@ class TestSearchSuccess(TestCase):
         ]
         output_json = json.loads(result.output)
         self.assertCountEqual(output_json, expected_json)
+
+    @patch("cert_host_scraper.cli.process_urls")
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_search_result_keyword_timeout(
+        self, mock_fetch_urls: Mock, mock_process_urls: Mock
+    ):
+        runner = CliRunner()
+        mock_fetch_urls.return_value = [
+            "https://example-200.com",
+            "https://example-error.com",
+        ]
+        mock_process_urls.return_value = [
+            UrlResult("https://example-200.com", 200),
+            UrlResult("https://example-error.com", -1, ProbeStatus.TIMEOUT),
+        ]
+
+        result = runner.invoke(
+            search, ["example.com", "--result", "timeout", "--output", "json"]
+        )
+
+        self.assertEqual(result.exit_code, 0)
+        output_json = json.loads(result.output)
+        self.assertEqual(len(output_json), 1)
+        self.assertEqual(output_json[0]["url"], "https://example-error.com")
+        self.assertEqual(output_json[0]["probe_error"], "timeout")
 
 
 class TestCliGroup(TestCase):

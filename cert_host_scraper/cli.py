@@ -3,6 +3,9 @@ from __future__ import annotations
 import json
 import logging
 import sys
+from importlib.metadata import version
+
+__version__ = version("cert-host-scraper")
 
 import click
 from requests import RequestException
@@ -11,7 +14,7 @@ from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from cert_host_scraper import __version__
+from cert_host_scraper.prober_error import ProbeStatus
 from cert_host_scraper.scraper import (
     Options,
     Result,
@@ -42,32 +45,41 @@ def _render_json_output(results: list[UrlResult]) -> str:
 def _render_table_output(results: list[UrlResult], console: Console) -> None:
     table = Table(show_header=True, header_style="bold", box=box.MINIMAL)
     table.add_column("URL")
-    table.add_column("Status Code")
+    table.add_column("Result")
     for r in results:
         code = str(r.status_code) if r.status_code != NO_STATUS_CODE_TIMEOUT else "-"
-        url, code_display = r.url, code
+        url, result_display = r.url, code
         if r.status_code == 200:
-            code_display = f"[green]{code}[/green]"
+            result_display = f"[green]{code}[/green]"
             url = f"[green]{url}[/green]"
         elif r.probe_error is not None:
-            code_display = f"[red]{r.probe_error.value}[/red]"
-        table.add_row(url, code_display)
+            result_display = f"[red]{r.probe_error.value}[/red]"
+        table.add_row(url, result_display)
     console.print(table)
 
 
-def validate_status_code(
-    _ctx: click.core.Context, _param: click.core.Option, value: str
-):
-    try:
-        status_code = int(value)
-        if not (100 <= status_code <= 599):
-            raise click.BadParameter("status code must be between 100 and 599")
-
-        return status_code
-    except ValueError as e:
-        raise click.BadParameter("must be an integer") from e
-    except TypeError:
+def validate_result(_ctx: click.core.Context, _param: click.core.Option, value: str):
+    if value is None:
         return NO_STATUS_CODE_FILTER
+
+    status = value.strip().lower()
+    try:
+        return ProbeStatus(status)
+    except ValueError:
+        pass
+
+    try:
+        status_code = int(status)
+    except ValueError as e:
+        raise click.BadParameter(
+            "must be an HTTP status code or one of: "
+            + ", ".join(p.value for p in ProbeStatus)
+        ) from e
+
+    if not (100 <= status_code <= 599):
+        raise click.BadParameter("status code must be between 100 and 599")
+
+    return status_code
 
 
 class Output:
@@ -96,9 +108,9 @@ def cli(debug: bool):
 @cli.command()
 @click.argument("search")
 @click.option(
-    "--status-code",
-    help="Pass the HTTP status code to filter results on",
-    callback=validate_status_code,
+    "--result",
+    help="HTTP status code or failure class (dns, tls, refused, timeout, other) to filter on",
+    callback=validate_result,
 )
 @click.option("--timeout", help="Seconds before timing out on each request", default=2)
 @click.option(
@@ -120,7 +132,7 @@ def cli(debug: bool):
 )
 def search(
     search: str,
-    status_code: int,
+    result: int | ProbeStatus,
     timeout: int,
     clean: bool,
     strip: bool,
@@ -161,11 +173,11 @@ def search(
     else:
         scraped_results = process_urls(urls, options, batch_size)
 
-    result = Result(scraped_results)
-    if status_code != NO_STATUS_CODE_FILTER:
-        display = result.filter_by_status_code(status_code)
+    results = Result(scraped_results)
+    if result != NO_STATUS_CODE_FILTER:
+        display = results.filter_by_status(result)
     else:
-        display = result.scraped
+        display = results.scraped
 
     render(display)
 
