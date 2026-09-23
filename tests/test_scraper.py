@@ -136,15 +136,22 @@ class TestProcessUrls(TestCase):
 
 
 class TestResults(TestCase):
-    def test_filter_by_status_code(self):
+    def test_filter_by_status(self):
         results = scraper.Result(
             [
                 scraper.UrlResult("https://example-200.org", 200),
                 scraper.UrlResult("https://example-500.org", 500),
+                scraper.UrlResult(
+                    "https://example-timeout.org", -1, ProbeStatus.TIMEOUT
+                ),
             ]
         )
 
-        filtered = results.filter_by_status_code(200)
+        filtered = results.filter_by_status(200)
         self.assertEqual(1, len(filtered))
         self.assertEqual("https://example-200.org", filtered[0].url)
         self.assertEqual(200, filtered[0].status_code)
+
+        classified = results.filter_by_status(ProbeStatus.TIMEOUT)
+        self.assertEqual(1, len(classified))
+        self.assertEqual("https://example-timeout.org", classified[0].url)
