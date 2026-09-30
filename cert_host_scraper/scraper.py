@@ -24,6 +24,8 @@ urllib3.disable_warnings()
 # Conservative and tunable: covers p95 crt.sh latency without hanging forever.
 CRTSH_TIMEOUT = 30
 
+CRTSH_MAX_ATTEMPTS = 5
+
 
 @dataclass
 class Options:
@@ -76,7 +78,7 @@ async def validate_url(url: str, options: Options) -> UrlResult:
     retry=retry_if_exception_type(
         (requests.RequestException, urllib3.exceptions.HTTPError)
     ),
-    stop=stop_after_attempt(3),
+    stop=stop_after_attempt(CRTSH_MAX_ATTEMPTS),
     wait=wait_exponential(multiplier=1, min=1, max=10),
     reraise=True,
     before=before_log(logger, logging.DEBUG),

@@ -1,3 +1,7 @@
+# 0.7.6
+
+- Retry crt.sh requests up to 5 attempts to survive intermittent 502s
+
 # 0.7.5
 
 - Fix `--status-code` filter

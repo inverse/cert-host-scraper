@@ -1,5 +1,6 @@
 import asyncio
 import os
+from typing import Any, cast
 from unittest import TestCase
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -17,6 +18,8 @@ my_vcr = vcr.VCR(
 )
 
 TIMEOUT = 2
+
+FETCH_SITE_RETRY = cast(Any, scraper.fetch_site).retry
 
 
 @pytest.mark.enable_socket
@@ -68,6 +71,35 @@ class TestFetchSite(TestCase):
             headers=scraper._default_headers(),
             timeout=scraper.CRTSH_TIMEOUT,
         )
+
+    @patch.object(FETCH_SITE_RETRY, "sleep")
+    @patch("cert_host_scraper.scraper.requests.get")
+    def test_fetch_site_retries_bad_gateway_then_succeeds(self, mock_get, _sleep):
+        response = Mock()
+        response.json.return_value = [{"common_name": "example.com"}]
+        response.raise_for_status.side_effect = [
+            requests.HTTPError("502 Server Error"),
+            requests.HTTPError("503 Service Unavailable"),
+            None,
+        ]
+        mock_get.return_value = response
+
+        result = scraper.fetch_site("example.com")
+
+        self.assertEqual([{"common_name": "example.com"}], result)
+        self.assertEqual(3, mock_get.call_count)
+
+    @patch.object(FETCH_SITE_RETRY, "sleep")
+    @patch("cert_host_scraper.scraper.requests.get")
+    def test_fetch_site_gives_up_after_max_attempts(self, mock_get, _sleep):
+        response = Mock()
+        response.raise_for_status.side_effect = requests.HTTPError("502 Bad Gateway")
+        mock_get.return_value = response
+
+        with self.assertRaises(requests.HTTPError):
+            scraper.fetch_site("example.com")
+
+        self.assertEqual(scraper.CRTSH_MAX_ATTEMPTS, mock_get.call_count)
 
 
 class TestValidateUrl(TestCase):
