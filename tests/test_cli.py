@@ -88,14 +88,44 @@ class TestSearchSuccess(TestCase):
         self.assertEqual(result.exit_code, 0)
 
         output = result.output
-        self.assertIn("Searching for example.com", output)
-        self.assertIn(f"Found {len(urls)} URLs for example.com", output)
+        self.assertIn("example.com", output)
         self.assertIn("URL", output)
-        self.assertIn("Result", output)
+        self.assertIn("Status", output)
+        self.assertIn("Reason", output)
         self.assertIn("https://example-200.com", output)
         self.assertIn("200", output)
         self.assertIn("https://example-404.com", output)
         self.assertIn("404", output)
+
+    @patch("cert_host_scraper.cli.process_urls")
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_search_sorts_failures_first(
+        self, mock_fetch_urls: Mock, mock_process_urls: Mock
+    ):
+        runner = CliRunner()
+        mock_fetch_urls.return_value = [
+            "https://a.com",
+            "https://b.com",
+            "https://c.com",
+            "https://d.com",
+        ]
+        mock_process_urls.return_value = [
+            UrlResult("https://a.com", 200),
+            UrlResult("https://b.com", 404),
+            UrlResult("https://c.com", -1, ProbeStatus.DNS_ERROR),
+            UrlResult("https://d.com", 308),
+        ]
+
+        result = runner.invoke(search, ["example.com", "--output", "table"])
+
+        self.assertEqual(result.exit_code, 0)
+        output = result.output
+        order = [output.index(u) for u in ("c.com", "a.com", "d.com", "b.com")]
+        self.assertEqual(sorted(order), order)
+        self.assertIn("1 ok", output)
+        self.assertIn("1 redirect", output)
+        self.assertIn("1 error", output)
+        self.assertIn("1 failed", output)
 
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
@@ -112,7 +142,8 @@ class TestSearchSuccess(TestCase):
 
         self.assertEqual(result.exit_code, 0)
         self.assertIn("https://example-error.com", result.output)
-        self.assertIn(ProbeStatus.DNS_ERROR.value, result.output)
+        self.assertIn("DNS lookup failed", result.output)
+        self.assertIn("1 failed", result.output)
 
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
@@ -143,6 +174,31 @@ class TestSearchSuccess(TestCase):
         ]
         output_json = json.loads(result.output)
         self.assertCountEqual(output_json, expected_json)
+
+    @patch("cert_host_scraper.cli.process_urls")
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_search_json_output_probe_error_wire_value(
+        self, mock_fetch_urls: Mock, mock_process_urls: Mock
+    ):
+        runner = CliRunner()
+        mock_fetch_urls.return_value = ["https://example-error.com"]
+        mock_process_urls.return_value = [
+            UrlResult("https://example-error.com", -1, ProbeStatus.DNS_ERROR),
+        ]
+
+        result = runner.invoke(search, ["example.com", "--output", "json"])
+
+        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(
+            [
+                {
+                    "url": "https://example-error.com",
+                    "status_code": -1,
+                    "probe_error": ProbeStatus.DNS_ERROR.value,
+                }
+            ],
+            json.loads(result.output),
+        )
 
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
