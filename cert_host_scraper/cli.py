@@ -104,7 +104,7 @@ def _render_table_output(results: list[UrlResult], console: Console) -> None:
         table.add_row(r.url, _status_cell(r), _reason_cell(r))
     console.print(table)
     if results:
-        console.print(_summary(results))
+        console.print(_summary(results), highlight=False)
 
 
 def validate_result(_ctx: click.core.Context, _param: click.core.Option, value: str):

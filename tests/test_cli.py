@@ -1,4 +1,5 @@
 import json
+import re
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
@@ -9,6 +10,13 @@ from cert_host_scraper import __version__
 from cert_host_scraper.cli import cli, search
 from cert_host_scraper.prober_error import ProbeStatus
 from cert_host_scraper.scraper import UrlResult
+
+ANSI = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
+
+
+def plain(output: str) -> str:
+    """Drop rich's styling so assertions match the text a user reads."""
+    return ANSI.sub("", output)
 
 
 class TestVersion(TestCase):
@@ -52,12 +60,37 @@ class TestSearch(TestCase):
         result = runner.invoke(search, ["example.com", "--result", "frobnicate"])
         self.assertEqual(result.exit_code, 2)
 
-    def test_search_result_uppercase_keyword(self):
-        """Uppercase 'TIMEOUT' is accepted case-insensitively, so invocation
-        proceeds to scraping (fails only because tests block sockets)."""
+    @patch("cert_host_scraper.cli.process_urls")
+    @patch("cert_host_scraper.cli.fetch_urls")
+    def test_search_result_uppercase_keyword(
+        self, mock_fetch_urls: Mock, mock_process_urls: Mock
+    ):
+        """Uppercase 'TIMEOUT' is accepted and filters like the lowercase form."""
         runner = CliRunner()
-        result = runner.invoke(search, ["example.com", "--result", "TIMEOUT"])
-        self.assertEqual(result.exit_code, 1)
+        mock_fetch_urls.return_value = [
+            "https://example-200.com",
+            "https://example-error.com",
+        ]
+        mock_process_urls.return_value = [
+            UrlResult("https://example-200.com", 200),
+            UrlResult("https://example-error.com", -1, ProbeStatus.TIMEOUT),
+        ]
+
+        result = runner.invoke(
+            search, ["example.com", "--result", "TIMEOUT", "--output", "json"]
+        )
+
+        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(
+            [
+                {
+                    "url": "https://example-error.com",
+                    "status_code": -1,
+                    "probe_error": "timeout",
+                }
+            ],
+            json.loads(result.output),
+        )
 
     def test_invalid_output(self):
         runner = CliRunner()
@@ -87,7 +120,7 @@ class TestSearchSuccess(TestCase):
 
         self.assertEqual(result.exit_code, 0)
 
-        output = result.output
+        output = plain(result.output)
         self.assertIn("example.com", output)
         self.assertIn("URL", output)
         self.assertIn("Status", output)
@@ -119,7 +152,7 @@ class TestSearchSuccess(TestCase):
         result = runner.invoke(search, ["example.com", "--output", "table"])
 
         self.assertEqual(result.exit_code, 0)
-        output = result.output
+        output = plain(result.output)
         order = [output.index(u) for u in ("c.com", "a.com", "d.com", "b.com")]
         self.assertEqual(sorted(order), order)
         self.assertIn("1 ok", output)
@@ -141,9 +174,10 @@ class TestSearchSuccess(TestCase):
         result = runner.invoke(search, ["example.com", "--output", "table"])
 
         self.assertEqual(result.exit_code, 0)
-        self.assertIn("https://example-error.com", result.output)
-        self.assertIn("DNS lookup failed", result.output)
-        self.assertIn("1 failed", result.output)
+        output = plain(result.output)
+        self.assertIn("https://example-error.com", output)
+        self.assertIn("DNS lookup failed", output)
+        self.assertIn("1 failed", output)
 
     @patch("cert_host_scraper.cli.process_urls")
     @patch("cert_host_scraper.cli.fetch_urls")
