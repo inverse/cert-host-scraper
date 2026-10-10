@@ -1,6 +1,6 @@
 [tools]
 pre-commit = "4.6.2"
-uv = "0.12.21"
+uv = "0.13.0"
 
 [hooks]
 postinstall = "pre-commit install && pre-commit install --hook-type commit-msg --hook-type pre-push"
