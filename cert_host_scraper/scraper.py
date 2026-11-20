@@ -5,26 +5,13 @@ from dataclasses import dataclass
 
 import requests
 import urllib3
-from tenacity import (
-    before_log,
-    retry,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
 
-from cert_host_scraper import __version__
 from cert_host_scraper.prober_error import ProbeStatus, probe_status
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 urllib3.disable_warnings()
-
-# Conservative and tunable: covers p95 crt.sh latency without hanging forever.
-CRTSH_TIMEOUT = 30
-
-CRTSH_MAX_ATTEMPTS = 5
 
 
 @dataclass
@@ -50,12 +37,6 @@ class Result:
         return [result for result in self.scraped if result.status_code == value]
 
 
-def _default_headers() -> dict:
-    return {
-        "User-Agent": f"Mozilla/5.0 Cert-Host-Scraper/{__version__} (https://github.com/inverse/cert-host-scraper)"
-    }
-
-
 def fetch_site_information(url: str, timeout: int) -> tuple[int, ProbeStatus | None]:
     """Fetch the HTTP status code, or classify the transport failure."""
     try:
@@ -74,45 +55,6 @@ async def async_fetch_site_information(
 async def validate_url(url: str, options: Options) -> UrlResult:
     status_code, probe_error = await async_fetch_site_information(url, options.timeout)
     return UrlResult(url, status_code, probe_error)
-
-
-@retry(
-    retry=retry_if_exception_type(
-        (requests.RequestException, urllib3.exceptions.HTTPError)
-    ),
-    stop=stop_after_attempt(CRTSH_MAX_ATTEMPTS),
-    wait=wait_exponential(multiplier=1, min=1, max=10),
-    reraise=True,
-    before=before_log(logger, logging.DEBUG),
-)
-def fetch_site(search: str) -> list[dict]:
-    url = f"https://crt.sh/?q={search}&output=json"
-    result = requests.get(url, headers=_default_headers(), timeout=CRTSH_TIMEOUT)
-    result.raise_for_status()
-
-    return result.json()
-
-
-def scrape_urls(results: list[dict], options: Options) -> list[str]:
-    total_urls = []
-    for result in results:
-        common_name = result["common_name"]
-
-        if options.clean and "*" in common_name:
-            continue
-
-        total_urls.append(f"https://{common_name}")
-
-    return list(set(total_urls))
-
-
-def fetch_urls(site: str, options: Options) -> list[str]:
-    results = fetch_site(site)
-    logger.debug(f"Found {len(results)} results for {site}")
-    urls = scrape_urls(results, options)
-    logger.debug(f"Found {len(urls)} URLs for {site}")
-
-    return urls
 
 
 async def _process_urls(

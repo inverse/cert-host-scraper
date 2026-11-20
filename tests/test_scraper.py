@@ -1,6 +1,5 @@
 import asyncio
 import os
-from typing import Any, cast
 from unittest import TestCase
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -19,35 +18,6 @@ my_vcr = vcr.VCR(
 
 TIMEOUT = 2
 
-FETCH_SITE_RETRY = cast(Any, scraper.fetch_site).retry
-
-
-@pytest.mark.enable_socket
-class TestScraper(TestCase):
-    @my_vcr.use_cassette("google.com.yaml")
-    def test_fetch_urls_clean_true(self):
-        results = scraper.fetch_urls(
-            "google.com", scraper.Options(timeout=2, clean=True)
-        )
-        self.assertEqual(53, len(results))
-        self.assertIn("https://www.google.com", results)
-
-    @my_vcr.use_cassette("google.com.yaml")
-    def test_fetch_urls_clean_false(self):
-        results = scraper.fetch_urls(
-            "google.com", scraper.Options(timeout=2, clean=False)
-        )
-        self.assertEqual(60, len(results))
-        self.assertIn("https://*.mail.google.com", results)
-
-    @my_vcr.use_cassette("fetch_site_information_valid.yaml")
-    def test_fetch_site_information_valid(self):
-        status_code, probe_error = scraper.fetch_site_information(
-            "https://example.org", TIMEOUT
-        )
-        self.assertEqual(200, status_code)
-        self.assertIsNone(probe_error)
-
 
 class TestFetchSiteInformation(TestCase):
     @patch("cert_host_scraper.scraper.requests.head")
@@ -58,48 +28,14 @@ class TestFetchSiteInformation(TestCase):
         )
         self.assertEqual(ProbeStatus.OTHER, probe_error)
 
-
-class TestFetchSite(TestCase):
-    @patch("cert_host_scraper.scraper.requests.get")
-    def test_fetch_site_timeout(self, mock_get):
-        mock_get.return_value.json.return_value = []
-        result = scraper.fetch_site("example.com")
-        self.assertEqual([], result)
-        expected_url = "https://crt.sh/?q=example.com&output=json"
-        mock_get.assert_called_once_with(
-            expected_url,
-            headers=scraper._default_headers(),
-            timeout=scraper.CRTSH_TIMEOUT,
+    @pytest.mark.enable_socket
+    @my_vcr.use_cassette("fetch_site_information_valid.yaml")
+    def test_fetch_site_information_valid(self):
+        status_code, probe_error = scraper.fetch_site_information(
+            "https://example.org", TIMEOUT
         )
-
-    @patch.object(FETCH_SITE_RETRY, "sleep")
-    @patch("cert_host_scraper.scraper.requests.get")
-    def test_fetch_site_retries_bad_gateway_then_succeeds(self, mock_get, _sleep):
-        response = Mock()
-        response.json.return_value = [{"common_name": "example.com"}]
-        response.raise_for_status.side_effect = [
-            requests.HTTPError("502 Server Error"),
-            requests.HTTPError("503 Service Unavailable"),
-            None,
-        ]
-        mock_get.return_value = response
-
-        result = scraper.fetch_site("example.com")
-
-        self.assertEqual([{"common_name": "example.com"}], result)
-        self.assertEqual(3, mock_get.call_count)
-
-    @patch.object(FETCH_SITE_RETRY, "sleep")
-    @patch("cert_host_scraper.scraper.requests.get")
-    def test_fetch_site_gives_up_after_max_attempts(self, mock_get, _sleep):
-        response = Mock()
-        response.raise_for_status.side_effect = requests.HTTPError("502 Bad Gateway")
-        mock_get.return_value = response
-
-        with self.assertRaises(requests.HTTPError):
-            scraper.fetch_site("example.com")
-
-        self.assertEqual(scraper.CRTSH_MAX_ATTEMPTS, mock_get.call_count)
+        self.assertEqual(200, status_code)
+        self.assertIsNone(probe_error)
 
 
 class TestValidateUrl(TestCase):
