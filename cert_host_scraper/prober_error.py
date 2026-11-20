@@ -5,7 +5,7 @@ import requests
 from requests.exceptions import SSLError
 
 
-class ProbeStatus(str, enum.Enum):
+class ProbeStatus(enum.StrEnum):
     """Outcome of probing a URL's availability.
 
     Values are the JSON representation, so this doubles as the wire schema and
