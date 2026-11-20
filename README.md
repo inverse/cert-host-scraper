@@ -1,16 +1,18 @@
 # Cert Host Scraper
 
-[![CI](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/cert-host-scraper.svg)](https://badge.fury.io/py/cert-host-scraper)
+[![Python](https://img.shields.io/pypi/pyversions/cert-host-scraper)](https://pypi.org/project/cert-host-scraper/)
 ![PyPI downloads](https://img.shields.io/pypi/dm/cert-host-scraper?label=pypi%20downloads)
+[![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
+
+[![CI](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/inverse/cert-host-scraper/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/github/inverse/cert-host-scraper/graph/badge.svg?token=TLO58M5UC5)](https://codecov.io/github/inverse/cert-host-scraper)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![Static Badge](https://img.shields.io/badge/type%20checked-mypy-039dfc)
-[![License](https://img.shields.io/github/license/inverse/cert-host-scraper.svg)](LICENSE)
 
-Query the certificate transparency log from [crt.sh](https://crt.sh) by a given a keyword and returns the status code of the matched results. Optionally, filtering the results by status code.
+Search certificate transparency logs - via [crt.sh](https://crt.sh) or [certkit.io](https://www.certkit.io) - for hostnames matching a keyword. Each result is probed and shown with its HTTP status code or failure class, and results can be filtered by status code or error type, with output as a table or JSON.
 
-<img alt="Demo of cert-host-scraper" src="https://vhs.charm.sh/vhs-7fKWanXXcalG2oS28DVyZC.gif" width="800" />
+<img alt="Demo of cert-host-scraper" src="https://vhs.charm.sh/vhs-2UjiUosXl5Zov5TfIbViGF.gif" width="800" />
 
 ## Installation
 
