@@ -15,11 +15,11 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 from cert_host_scraper.prober_error import ProbeStatus
+from cert_host_scraper.providers import CertKit, CrtSh, Provider
 from cert_host_scraper.scraper import (
     Options,
     Result,
     UrlResult,
-    fetch_urls,
     process_urls,
 )
 from cert_host_scraper.utils import strip_url
@@ -145,13 +145,20 @@ RENDERERS = {
     Output.JSON: lambda results: click.echo(_render_json_output(results)),
 }
 
+PROVIDERS = {
+    "crt.sh": CrtSh,
+    "certkit.io": CertKit,
+}
 
-def _fetch_urls_with_spinner(search: str, options: Options) -> list[str]:
+
+def _fetch_urls_with_spinner(
+    provider: Provider, search: str, options: Options
+) -> list[str]:
     with Progress(
         SpinnerColumn(), TextColumn("{task.description}"), transient=True
     ) as progress:
         progress.add_task(f"Searching for {search}", total=None)
-        return fetch_urls(search, options)
+        return provider.fetch_urls(search, options)
 
 
 @click.group()
@@ -185,6 +192,13 @@ def cli(debug: bool):
     default=20,
 )
 @click.option(
+    "--provider",
+    type=click.Choice(sorted(PROVIDERS)),
+    required=False,
+    default="certkit.io",
+    help="Certificate transparency source to search",
+)
+@click.option(
     "--output", type=click.Choice(Output.values()), required=False, default="table"
 )
 def search(
@@ -194,6 +208,7 @@ def search(
     clean: bool,
     strip: bool,
     batch_size: int,
+    provider: str,
     output: str,
 ):
     """
@@ -206,18 +221,17 @@ def search(
     show_progress = output == Output.TABLE
 
     options = Options(timeout, clean)
-    fetch = _fetch_urls_with_spinner if show_progress else fetch_urls
+    source = PROVIDERS[provider]()
+    fetch = _fetch_urls_with_spinner if show_progress else Provider.fetch_urls
 
     try:
-        urls = fetch(search, options)
+        urls = fetch(source, search, options)
     except RequestException as e:
         click.echo(f"Failed to search for results: {e}")
         sys.exit(1)
 
     if show_progress:
-        click.echo(f"Results for {search}")
-
-    if show_progress:
+        click.echo(f"Using {provider} results for {search}")
         with Progress(transient=True) as progress:
             task_id = progress.add_task("Checking URLs", total=len(urls))
             scraped_results = process_urls(

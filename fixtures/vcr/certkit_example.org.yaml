@@ -1,0 +1,67 @@
+interactions:
+- request:
+    body: '{"domain": "example.org", "sort": ""}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '37'
+      Content-Type:
+      - application/json
+      Origin:
+      - https://www.certkit.io
+      Referer:
+      - https://www.certkit.io/
+      User-Agent:
+      - Mozilla/5.0 Cert-Host-Scraper/0.12.1.dev1+ga1cc84d2a.d20261120 (https://github.com/inverse/cert-host-scraper)
+    method: POST
+    uri: https://ct.certkit.io/search
+  response:
+    body:
+      string: '{"timeTakenMs":0,"totalCount":17,"results":[{"serialNumber":"255d4baa6149d53f3b851f9f04a43c7d","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing RSA CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-09-26T22:04:43Z","notAfter":"2026-12-25T22:13:27Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-09-26T22:16:27Z"},{"serialNumber":"ffbc4fba7b8b237ecfda4bf0719133f","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing ECC CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-09-26T22:05:05Z","notAfter":"2026-12-25T22:13:27Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-09-26T22:16:27Z"},{"serialNumber":"7e7b58625b824ffc247c6d546a1da0aa","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing RSA CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-09-26T21:48:16Z","notAfter":"2026-12-25T21:56:44Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-09-26T21:59:13Z"},{"serialNumber":"9c678017c601c05ade15d0a776cb5b3","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing ECC CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-09-26T21:48:22Z","notAfter":"2026-12-25T21:56:44Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-09-26T21:59:13Z"},{"serialNumber":"531e16f0f28235b65cc7cd35a5f0710b","commonName":"example.com","issuerOrganization":"Sectigo
+        Limited","issuerCommonName":"Sectigo Public Server Authentication CA OV R36","dnsNames":["example.org","www.example.org"],"notBefore":"2025-12-02T00:00:00Z","notAfter":"2026-12-02T23:59:59Z","isWildcard":false,"isPrecert":false,"insertedTime":"2025-12-02T02:05:57Z"},{"serialNumber":"f8f7abde735d78baa0bd4053f39021c","commonName":"example.com","issuerOrganization":"Sectigo
+        Limited","issuerCommonName":"Sectigo Public Server Authentication CA OV R36","dnsNames":["example.org","www.example.org"],"notBefore":"2025-11-21T00:00:00Z","notAfter":"2026-11-21T23:59:59Z","isWildcard":false,"isPrecert":false,"insertedTime":"2025-11-21T20:59:45Z"},{"serialNumber":"9de10580fa26441939f38af4afb1cb40","commonName":"example.com","issuerOrganization":"Sectigo
+        Limited","issuerCommonName":"Sectigo Public Server Authentication CA OV R36","dnsNames":["example.org"],"notBefore":"2025-11-20T00:00:00Z","notAfter":"2026-11-20T23:59:59Z","isWildcard":false,"isPrecert":false,"insertedTime":"2025-11-20T20:41:30Z"},{"serialNumber":"6d1c362ded0f4290b2ee803f827e17b2","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing RSA CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-07-29T21:22:40Z","notAfter":"2026-10-27T21:29:51Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-07-29T21:35:38Z"},{"serialNumber":"9c81d444f55c6aa13536dfc5642da4","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing ECC CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-07-29T21:22:47Z","notAfter":"2026-10-27T21:29:51Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-07-29T21:35:38Z"},{"serialNumber":"38c432085bfb48407103ca82741411af","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing ECC CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-05-31T21:06:34Z","notAfter":"2026-08-29T21:14:09Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-05-31T21:20:38Z"},{"serialNumber":"540eb70014596a4e1fd3e05e77a92f7","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing RSA CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-05-31T21:06:25Z","notAfter":"2026-08-29T21:14:08Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-05-31T21:20:35Z"},{"serialNumber":"4def09a6c789cb70b7944221c45abeb9","commonName":"example.org","issuerOrganization":"CLOUDFLARE,
+        INC.","issuerCommonName":"Cloudflare TLS Issuing ECC CA 1","dnsNames":["*.example.org","example.org"],"notBefore":"2026-04-02T22:18:16Z","notAfter":"2026-07-01T21:52:54Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-04-02T22:32:42Z"},{"serialNumber":"451811c71b1568ea2dfa36f24972a419","commonName":"example.org","issuerOrganization":"CLOUDFLARE,
+        INC.","issuerCommonName":"Cloudflare TLS Issuing RSA CA 1","dnsNames":["*.example.org","example.org"],"notBefore":"2026-04-02T21:05:18Z","notAfter":"2026-07-01T20:59:55Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-04-02T21:19:31Z"},{"serialNumber":"7562014b98a757f2b507fed32116a0d0","commonName":"example.org","issuerOrganization":"CLOUDFLARE,
+        INC.","issuerCommonName":"Cloudflare TLS Issuing ECC CA 1","dnsNames":["*.example.org","example.org"],"notBefore":"2026-04-02T20:25:18Z","notAfter":"2026-07-01T20:14:34Z","isWildcard":true,"isPrecert":true,"insertedTime":"2026-04-02T20:38:23Z"},{"serialNumber":"51bafaa692c9cfbf1019e1dbc846b32f","commonName":"example.org","issuerOrganization":"CLOUDFLARE,
+        INC.","issuerCommonName":"Cloudflare TLS Issuing RSA CA 1","dnsNames":["*.example.org","example.org"],"notBefore":"2026-04-02T20:12:42Z","notAfter":"2026-07-01T20:14:29Z","isWildcard":true,"isPrecert":true,"insertedTime":"2026-04-02T20:27:54Z"},{"serialNumber":"57775679ee37024d73d22c13d7508fd0","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing ECC CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-02-07T20:20:28Z","notAfter":"2026-05-08T20:26:51Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-02-07T20:31:40Z"},{"serialNumber":"5397f17937d6162acf5714b797070919","commonName":"example.org","issuerOrganization":"SSL
+        Corporation","issuerCommonName":"Cloudflare TLS Issuing RSA CA 3","dnsNames":["*.example.org","example.org"],"notBefore":"2026-02-07T20:19:06Z","notAfter":"2026-05-08T20:26:49Z","isWildcard":true,"isPrecert":false,"insertedTime":"2026-02-07T20:31:04Z"}]}'
+    headers:
+      Access-Control-Allow-Methods:
+      - POST, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - Content-Length,Content-Range
+      Access-Control-Max-Age:
+      - '86400'
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 20 Nov 2026 20:18:27 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

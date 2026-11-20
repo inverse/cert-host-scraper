@@ -33,7 +33,7 @@ class TestSearch(TestCase):
         result = runner.invoke(search)
         self.assertEqual(result.exit_code, 2)
 
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_network_error(self, mock_fetch_urls: Mock):
         mock_fetch_urls.side_effect = RequestException()
         runner = CliRunner()
@@ -61,7 +61,7 @@ class TestSearch(TestCase):
         self.assertEqual(result.exit_code, 2)
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_result_uppercase_keyword(
         self, mock_fetch_urls: Mock, mock_process_urls: Mock
     ):
@@ -100,7 +100,7 @@ class TestSearch(TestCase):
 
 class TestSearchSuccess(TestCase):
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_table_output(self, mock_fetch_urls: Mock, mock_process_urls: Mock):
         runner = CliRunner()
         urls = [
@@ -131,7 +131,7 @@ class TestSearchSuccess(TestCase):
         self.assertIn("404", output)
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_sorts_failures_first(
         self, mock_fetch_urls: Mock, mock_process_urls: Mock
     ):
@@ -161,7 +161,7 @@ class TestSearchSuccess(TestCase):
         self.assertIn("1 failed", output)
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_table_output_probe_error(
         self, mock_fetch_urls: Mock, mock_process_urls: Mock
     ):
@@ -180,7 +180,7 @@ class TestSearchSuccess(TestCase):
         self.assertIn("1 failed", output)
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_json_output(self, mock_fetch_urls: Mock, mock_process_urls: Mock):
         runner = CliRunner()
         urls = ["https://example-200.com", "https://example-404.com"]
@@ -210,7 +210,7 @@ class TestSearchSuccess(TestCase):
         self.assertCountEqual(output_json, expected_json)
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_json_output_probe_error_wire_value(
         self, mock_fetch_urls: Mock, mock_process_urls: Mock
     ):
@@ -235,7 +235,7 @@ class TestSearchSuccess(TestCase):
         )
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_result_200(self, mock_fetch_urls: Mock, mock_process_urls: Mock):
         runner = CliRunner()
         urls = [
@@ -267,7 +267,7 @@ class TestSearchSuccess(TestCase):
         self.assertCountEqual(output_json, expected_json)
 
     @patch("cert_host_scraper.cli.process_urls")
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_search_result_keyword_timeout(
         self, mock_fetch_urls: Mock, mock_process_urls: Mock
     ):
@@ -295,7 +295,7 @@ class TestSearchSuccess(TestCase):
 class TestCliGroup(TestCase):
     """Cover the cli() group callback path via --debug."""
 
-    @patch("cert_host_scraper.cli.fetch_urls")
+    @patch("cert_host_scraper.providers.Provider.fetch_urls")
     def test_cli_with_debug(self, mock_fetch_urls: Mock):
         mock_fetch_urls.return_value = []
         runner = CliRunner()
