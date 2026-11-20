@@ -3,7 +3,7 @@ name = "cert-host-scraper"
 dynamic = ["version"]
 description = "Query the certificate transparency log from crt.sh by a given a keyword and returns the status code of the matched results. Optionally, filtering the results by status code."
 authors = [{ name = "Malachi Soord", email = "inverse.chi@gmail.com" }]
-requires-python = ">=3.10,<4"
+requires-python = ">=3.11,<4"
 readme = "README.md"
 license = "MIT"
 dependencies = [
@@ -26,7 +26,7 @@ dev = [
     "pytest-asyncio>=1.4.0",
     "pytest-cov>=7.0.0,<8",
     "pytest-socket>=0.8,<0.9",
-    "vcrpy>=8.1.1,<9",
+    "vcrpy>=9.4.2,<10",
 ]
 
 [build-system]
@@ -37,7 +37,7 @@ build-backend = "hatchling.build"
 source = "vcs"
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 
 
 [tool.ruff.lint]
