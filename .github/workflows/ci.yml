@@ -18,6 +18,8 @@ jobs:
     - uses: jdx/mise-action@v5
     - name: Install pip dependencies
       run: uv sync
+    - name: Check lockfile is in sync
+      run: uv lock --check
     - uses: actions/cache@v6
       with:
         path: ~/.cache/pre-commit/
